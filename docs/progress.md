@@ -8,5 +8,6 @@
 | 4 Reactivity and browser | Done                      | typecheck clean, 61 tests passed in total        |
 | 5 Router                 | Done                      | typecheck clean, 86 tests passed, commit aad6f6c |
 | 6 Router                 | Done                      | 108 tests passed, commit 380c2fa                 |
-| 7                        | Written, awaiting verification (real-browser check in Phase 8) |                                                  |
-| 8 to 10                  | Not started               |                                                  |
+| 7                        | Done, 138 tests, commit e5d60a4 |                                                  |
+| 8                        | Written, awaiting verification |                                                  |
+| 9 to 10                  | Not started               |                                                  |

@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dev": "bun run --filter @gambrel/example-app dev",
+    "build": "bun run --filter @gambrel/example-app build",
     "start": "bun run --filter @gambrel/example-app start",
     "typecheck": "bun run --filter '@gambrel/*' typecheck",
     "test": "bun test"

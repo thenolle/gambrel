@@ -13,10 +13,7 @@ let server: ServerHandle
 beforeAll(async () => {
   await generateRoutes({ root })
   const { createApplication } = await import('../src/app.ts')
-  server = serve(createApplication({ development: false, entry: '/assets/client.js' }), {
-    port: 0,
-    hostname: '127.0.0.1'
-  })
+  server = serve(createApplication({ development: false, entry: '/assets/client.js', clientDir: join(root, 'dist', 'client') }), { port: 0, hostname: '127.0.0.1' })
 })
 
 afterAll(async () => {

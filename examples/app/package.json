@@ -18,8 +18,9 @@
   },
   "scripts": {
     "generate": "bun scripts/generate.ts",
-    "dev": "bun run generate && bun --watch src/server.ts",
-    "start": "bun run generate && bun src/server.ts",
+    "build": "bun scripts/build.ts",
+    "dev": "bun --watch scripts/dev.ts",
+    "start": "NODE_ENV=production bun dist/server/index.js",
     "typecheck": "bun run generate && tsc -p tsconfig.json"
   }
 }
