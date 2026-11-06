@@ -1,48 +1,28 @@
+import { assertAttributeName, isEventProp, isReservedProp, normalizeAttribute } from './attributes.ts'
 import { isRawHtml, isVNode } from './element.ts'
 import { escapeAttribute, escapeText } from './escape.ts'
 import type { Child, Props, VNode } from './types.ts'
+import { describeType, isChildArray } from './util.ts'
 
 const VOID_ELEMENTS: ReadonlySet<string> = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'
 ])
 
 const RAW_TEXT_ELEMENTS: ReadonlySet<string> = new Set(['script', 'style'])
-const RESERVED_PROPS: ReadonlySet<string> = new Set(['children', 'key', 'ref'])
-const RENAMED_PROPS: ReadonlyMap<string, string> = new Map([
-  ['className', 'class'],
-  ['htmlFor', 'for']
-])
-
 const TAG_NAME = /^[A-Za-z][A-Za-z0-9-]*$/
-const ATTRIBUTE_NAME = /^[A-Za-z_:][-A-Za-z0-9_:.]*$/
-const EVENT_PROP = /^on/i
-
-function describeType(value: unknown): string {
-  if (value === null) return 'null'
-  if (Array.isArray(value)) return 'array'
-  return typeof value
-}
-
-function isChildArray(value: unknown): value is readonly Child[] {
-  return Array.isArray(value)
-}
 
 function renderAttribute(name: string, input: unknown): string {
-  const value = typeof input === 'function' ? (input as () => unknown)() : input
-  if (value === null || value === undefined || value === false) return ''
+  const value = normalizeAttribute(name, typeof input === 'function' ? (input as () => unknown)() : input)
+  if (value === null) return ''
   if (value === true) return ` ${name}`
-  if (typeof value === 'string') return ` ${name}="${escapeAttribute(value)}"`
-  if (typeof value === 'number' && Number.isFinite(value)) return ` ${name}="${value}"`
-  throw new TypeError(`Attribute '${name}' has an unsupported value of type ${describeType(value)}`)
+  return ` ${name}="${escapeAttribute(value)}"`
 }
 
 function renderAttributes(props: Props): string {
   let output = ''
   for (const name of Object.keys(props)) {
-    if (RESERVED_PROPS.has(name) || EVENT_PROP.test(name)) continue
-    const replacement = RENAMED_PROPS.get(name)
-    if (replacement !== undefined) throw new TypeError(`Use '${replacement}' instead of '${name}'`)
-    if (!ATTRIBUTE_NAME.test(name)) throw new TypeError(`Invalid attribute name '${name}'`)
+    if (isReservedProp(name) || isEventProp(name)) continue
+    assertAttributeName(name)
     output += renderAttribute(name, props[name])
   }
   return output

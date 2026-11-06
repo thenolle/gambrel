@@ -1,3 +1,4 @@
+/** @jsxImportSource @gambrel/view */
 import { describe, expect, test } from 'bun:test'
 import { createElement, raw, renderToString, type Child } from '../src/index.ts'
 
