@@ -20,6 +20,19 @@
       ]
     },
     {
+      "title": "Guides",
+      "pages": [
+        { "title": "Loaders", "path": "loaders", "summary": "Load typed data on the server." },
+        { "title": "Guards and redirects", "path": "guards", "summary": "Protect routes before any data is loaded." },
+        { "title": "Errors and 404 pages", "path": "error-pages", "summary": "Predictable error documents, and how to customize them." },
+        { "title": "Interactivity", "path": "interactivity", "summary": "Signals, events and hydration-safe components." },
+        { "title": "Configuration", "path": "configuration", "summary": "gambrel.config.ts and environment variables." },
+        { "title": "Deployment", "path": "deployment", "summary": "Ship the built server and browser bundle." },
+        { "title": "Testing your app", "path": "testing", "summary": "Test handlers, loaders, documents and hydration." },
+        { "title": "Troubleshooting", "path": "troubleshooting", "summary": "Real error messages and their fixes." }
+      ]
+    },
+    {
       "title": "Reference",
       "pages": [
         { "title": "Router", "path": "router" },
