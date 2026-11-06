@@ -36,7 +36,7 @@ const HEADING = /^(#{1,4})\s+(.+?)(?:\s+#+)?\s*$/
 const RULE = /^ {0,3}([-*_])(?:\s*\1){2,}\s*$/
 const QUOTE = /^\s{0,3}>/
 const LIST = /^(\s*)([-*+]|\d{1,9}[.)])\s+(.*)$/
-const TABLE_SEPARATOR = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?\s*$/
+const TABLE_SEPARATOR = /^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)*\|?\s*$/
 
 export { escapeHtml }
 

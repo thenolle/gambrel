@@ -6,14 +6,17 @@
       "title": "Start here",
       "pages": [
         { "title": "Introduction", "path": "introduction", "summary": "What Gambrel is and how the pieces fit." },
-        { "title": "Getting started", "path": "getting-started", "summary": "Install, run the example and add your first routes." }
+        { "title": "Getting started", "path": "getting-started", "summary": "Install, run the example and add your first routes." },
+        { "title": "Tutorial: a bookshelf", "path": "tutorial", "summary": "Build a small full-stack app step by step." }
       ]
     },
     {
       "title": "Concepts",
       "pages": [
-        { "title": "Architecture", "path": "architecture" },
-        { "title": "SSR and hydration", "path": "ssr-hydration" }
+        { "title": "Routing and layouts", "path": "routing", "summary": "Files, patterns, precedence and nested layouts." },
+        { "title": "The server/client boundary", "path": "server-client-boundary", "summary": "What runs where, and what reaches the browser." },
+        { "title": "SSR and hydration", "path": "ssr-hydration" },
+        { "title": "Architecture", "path": "architecture" }
       ]
     },
     {
