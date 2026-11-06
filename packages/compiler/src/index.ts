@@ -1,1 +1,6 @@
-export {}
+export { discoverRoutes } from './discover.ts'
+export { CompilerError } from './errors.ts'
+export { generateModules, generateRoutes, writeModules } from './generate.ts'
+export { buildRouteTable } from './table.ts'
+export type { GenerateRoutesOptions, GenerateRoutesResult, GeneratedFileName, GeneratedModules } from './generate.ts'
+export type { RouteSource, RouteTable } from './table.ts'
