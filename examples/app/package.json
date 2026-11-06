@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@gambrel/browser": "workspace:*",
     "@gambrel/bun": "workspace:*",
-    "@gambrel/core": "workspace:*"
+    "@gambrel/core": "workspace:*",
+    "@gambrel/reactivity": "workspace:*",
+    "@gambrel/view": "workspace:*"
   },
   "scripts": {
     "dev": "bun --watch server.ts",
