@@ -1,0 +1,16 @@
+{
+  "name": "@gambrel/website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Client-only documentation site that renders the Markdown files in docs/.",
+  "type": "module",
+  "dependencies": {
+    "@gambrel/bun": "workspace:*",
+    "@gambrel/core": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun scripts/serve.ts",
+    "build": "bun scripts/build.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

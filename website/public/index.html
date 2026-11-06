@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gambrel documentation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      var saved = localStorage.getItem('gambrel-docs-theme')
+      document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    } catch (error) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="topbar">
+    <button id="menu" class="icon" type="button" aria-label="Toggle navigation" aria-controls="sidebar">Menu</button>
+    <a class="brand" href="#/">Gambrel <span>docs</span></a>
+    <button id="open-search" class="search-trigger" type="button">Search the documentation <kbd>/</kbd></button>
+    <a id="repo" class="icon" href="https://github.com/thenolle/gambrel" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <button id="theme" class="icon" type="button" aria-label="Toggle color theme">Dark</button>
+  </header>
+  <div class="layout">
+    <nav id="sidebar" aria-label="Documentation"></nav>
+    <main id="content" tabindex="-1"><p class="loading">Loading documentation...</p></main>
+    <aside id="toc" aria-label="On this page"></aside>
+  </div>
+  <dialog id="search" aria-label="Search the documentation">
+    <div class="search-box">
+      <input id="search-input" type="search" placeholder="Search the documentation" autocomplete="off" aria-label="Search the documentation">
+      <div id="search-results" role="listbox"></div>
+    </div>
+  </dialog>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

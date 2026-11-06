@@ -12,6 +12,8 @@
     "build": "bun run --filter @gambrel/example-app build",
     "start": "bun run --filter @gambrel/example-app start",
     "typecheck": "bun run --filter '@gambrel/*' typecheck",
+    "docs": "bun run --filter @gambrel/website dev",
+    "docs:build": "bun run --filter @gambrel/website build",
     "test": "bun test"
   },
   "devDependencies": {

@@ -1,0 +1,32 @@
+{
+  "title": "Gambrel",
+  "repo": "https://github.com/thenolle/gambrel",
+  "sections": [
+    {
+      "title": "Start here",
+      "pages": [
+        { "title": "Introduction", "path": "introduction", "summary": "What Gambrel is and how the pieces fit." },
+        { "title": "Getting started", "path": "getting-started", "summary": "Install, run the example and add your first routes." }
+      ]
+    },
+    {
+      "title": "Concepts",
+      "pages": [
+        { "title": "Architecture", "path": "architecture" },
+        { "title": "SSR and hydration", "path": "ssr-hydration" }
+      ]
+    },
+    {
+      "title": "Reference",
+      "pages": [
+        { "title": "Router", "path": "router" },
+        { "title": "Compiler", "path": "compiler" },
+        { "title": "Build and development", "path": "build" },
+        { "title": "Core and Bun adapter", "path": "core" },
+        { "title": "View and JSX", "path": "view" },
+        { "title": "Reactivity", "path": "reactivity" },
+        { "title": "Browser runtime", "path": "browser" }
+      ]
+    }
+  ]
+}
