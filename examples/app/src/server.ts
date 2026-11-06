@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import { serve } from '@gambrel/bun'
 import { createApplication } from './app.ts'
 
-const development = process.env['NODE_ENV'] !== 'production'
+const development = process.env['NODE_ENV'] === 'development'
 const port = Number(process.env['PORT'] ?? 3000)
 if (!Number.isInteger(port)) throw new Error(`PORT must be an integer, received '${process.env['PORT']}'`)
 

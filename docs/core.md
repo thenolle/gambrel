@@ -29,9 +29,13 @@ A handler receives `{ request, url, method, params }` and returns a `Response` o
 
 Thrown errors go to `onError`. The default logs the error and returns `Internal Server Error`, or the stack when `development: true`.
 
-## Not implemented yet
+## Not implemented
 
-Automatic HEAD and OPTIONS handling, static file serving (Phase 8).
+Automatic HEAD and OPTIONS handling for explicit core routes. (Document routes served by `@gambrel/ssr` do answer HEAD.)
+
+## Static files
+
+`staticFiles` in `@gambrel/bun` serves a directory under a URL prefix; see `docs/build.md`.
 
 ## Bun adapter
 

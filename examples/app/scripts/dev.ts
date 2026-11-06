@@ -2,6 +2,8 @@ import { watch } from 'node:fs'
 import { join } from 'node:path'
 import { buildClient, loadConfig } from '@gambrel/compiler'
 
+process.env['NODE_ENV'] = 'development'
+
 const root = join(import.meta.dir, '..')
 const config = await loadConfig(root)
 

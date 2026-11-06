@@ -9,7 +9,7 @@
 | `bun test`          | Runs all tests, including the build and end-to-end tests.                                                                                       |
 | `bun run build`     | Production build of the example into `examples/app/dist`.                                                                                       |
 | `bun run start`     | Runs the built server (`NODE_ENV=production`). Build first.                                                                                     |
-| `bun run dev`       | Builds the client in development mode, watches `src/` to rebuild it, restarts the server on server-side changes. Reload the page after changes. |
+| `bun run dev`       | Builds the client in development mode, watches `src/` to rebuild it, restarts the server on server-side changes. Reload the page after changes. It sets `NODE_ENV=development`; every other value, including unset, behaves as production for error detail. |
 
 ## Configuration (`gambrel.config.ts`, optional)
 
