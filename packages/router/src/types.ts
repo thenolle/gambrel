@@ -123,3 +123,8 @@ export interface ResolveInput<C = unknown> {
   readonly search?: string | undefined
   readonly context: C
 }
+
+/**
+ * Any page or layout component, regardless of its params and data types.
+ */
+export type AnyRouteComponent = (props: never) => Child

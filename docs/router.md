@@ -40,3 +40,7 @@ Result kinds: `page` (with `chain` of `{ id, kind, data }`), `redirect`, `denied
 ## Loader data
 
 Plain JSON only: `null`, booleans, strings, finite numbers, arrays and plain objects. `undefined`, functions, symbols, bigint, `NaN`, `Infinity`, `Date`, `Map`, `Set`, class instances and circular references are rejected with a path in the message (`assertJsonValue`).
+
+## Server modules
+
+`hooksFromModule(id, module)` turns a `*.server.ts` module namespace into `EntryHooks`. The module may export only `loader` and `beforeLoad` (functions), at least one. Any other export throws `RouteConfigError`. The generated server manifest calls it for every server file.
