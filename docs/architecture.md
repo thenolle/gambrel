@@ -2,21 +2,20 @@
 
 ## Release model
 
-Monorepo-only prototype. Packages export TypeScript source and are consumed through Bun workspaces. Publishing is a later decision.
+Release model: monorepo-only prototype; every package is `private`.
 
 ## Packages and responsibilities
 
-| Package               | Responsibility                                     | Runtime dependencies                   |
-| --------------------- | -------------------------------------------------- | -------------------------------------- |
-| `@gambrel/reactivity` | Signals, effects, cleanup                          | none                                   |
-| `@gambrel/view`       | VNodes, JSX runtime, server renderer               | `@gambrel/reactivity` (only if needed) |
-| `@gambrel/browser`    | Mount, hydrate, DOM updates, events                | `view`, `reactivity`                   |
+| Package               | Responsibility                                          | Runtime dependencies                                   |
+| --------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
+| `@gambrel/reactivity` | Signals, effects, cleanup                               | none                                                   |
+| `@gambrel/view`       | VNodes, JSX runtime, server renderer                    | `@gambrel/reactivity` (only if needed)                 |
+| `@gambrel/browser`    | Mount, hydrate, DOM updates, events, `hydrateRoutes`   | `view`, `reactivity`, `router`                         |
 | `@gambrel/router`     | Matching, resolution, hydration payload, `composeRoute` | `view` (types, and `createElement` for `composeRoute`) |
-| `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes` | `view`, `reactivity`, `router` |
-| `@gambrel/ssr`        | Document request handler | `router`, `view` |
-| `@gambrel/compiler`   | Route discovery, manifests, builds                 | `router` (types)                       |
-| `@gambrel/core`       | Server app, context, response normalization        | none                                   |
-| `@gambrel/bun`        | `Bun.serve` adapter                                | `core`                                 |
+| `@gambrel/ssr`        | Document request handler                                | `router`, `view`                                       |
+| `@gambrel/compiler`   | Route discovery, manifests, builds                      | `router` (types)                                       |
+| `@gambrel/core`       | Server app, context, response normalization             | none                                                   |
+| `@gambrel/bun`        | `Bun.serve` adapter                                     | `core`                                                 |
 
 ## Dependency direction
 

@@ -1,6 +1,8 @@
 {
   "name": "@gambrel/reactivity",
   "version": "0.1.0",
+  "description": "Signals, effects, cleanup",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {

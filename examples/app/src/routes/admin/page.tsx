@@ -1,7 +1,7 @@
 /** @jsxImportSource @gambrel/view */
 import type { LoaderData, PageProps, ParamsOf } from '@gambrel/router'
 import type { Child } from '@gambrel/view'
-import type { loader } from './page.server'
+import type { loader } from './page.server.ts'
 
 export default function AdminPage(props: PageProps<ParamsOf<'/admin'>, LoaderData<typeof loader>>): Child {
   return (

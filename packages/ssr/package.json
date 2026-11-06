@@ -1,6 +1,8 @@
 {
   "name": "@gambrel/ssr",
   "version": "0.1.0",
+  "description": "Document request handler",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {

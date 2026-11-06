@@ -29,17 +29,17 @@ export function payloadOf(html: string): ReturnType<typeof parsePayload> {
 export interface LoadedPage {
   readonly document: Document
   readonly window: Window
+  /**
+   * The pathname the server saw, for `hydrateRoutes({ pathname })`.
+   */
+  readonly pathname: string
 }
 
 /**
- * Fetches a page from the test server and loads the HTML into a happy-dom document at the
- * same path. `mutate` can alter the HTML first. Scripts are neither executed nor fetched.
+ * Fetches a page from the test server and parses the HTML into a happy-dom document with
+ * DOMParser. `mutate` can alter the HTML first. Scripts are neither executed nor fetched.
  */
-export async function loadPage(
-  server: ServerHandle,
-  path: string,
-  mutate: (html: string) => string = (html) => html
-): Promise<LoadedPage> {
+export async function loadPage(server: ServerHandle, path: string, mutate: (html: string) => string = (html) => html): Promise<LoadedPage> {
   const response = await fetch(new URL(path, server.url))
   const window = new Window({
     url: `http://localhost${path}`,
@@ -49,12 +49,10 @@ export async function loadPage(
       disableCSSFileLoading: true
     }
   })
-  const document = window.document as unknown as Document
-  const html = mutate(await response.text())
-  const parsedDocument = new window.DOMParser().parseFromString(html, 'text/html')
-  document.replaceChild(
-    document.importNode(parsedDocument.documentElement as unknown as Node, true),
-    document.documentElement
-  )
-  return { document, window }
+  const parsed = new window.DOMParser().parseFromString(mutate(await response.text()), 'text/html')
+  return {
+    document: parsed as unknown as Document,
+    window,
+    pathname: new URL(path, 'http://localhost').pathname
+  }
 }

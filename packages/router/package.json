@@ -1,6 +1,8 @@
 {
   "name": "@gambrel/router",
   "version": "0.1.0",
+  "description": "Matching, resolution, hydration payload, `composeRoute`",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {

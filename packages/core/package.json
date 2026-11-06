@@ -1,6 +1,8 @@
 {
   "name": "@gambrel/core",
   "version": "0.1.0",
+  "description": "Server app, context, response normalization",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {

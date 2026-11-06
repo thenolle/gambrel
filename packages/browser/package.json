@@ -1,6 +1,8 @@
 {
   "name": "@gambrel/browser",
   "version": "0.1.0",
+  "description": "Mount, hydrate, DOM updates, events",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {

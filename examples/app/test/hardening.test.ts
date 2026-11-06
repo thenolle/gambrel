@@ -72,7 +72,7 @@ describe('catch-all route', () => {
 describe('hydration of more documents', () => {
   for (const path of ['/about', '/users', '/docs/a/b']) {
     test(`hydrates ${path} without mismatches`, async () => {
-      const { document } = await loadPage(server, path)
+      const { document, pathname } = await loadPage(server, path)
       const client = await import('../.gambrel/manifest.client.ts')
       const main = document.querySelector('main')
       const found: HydrationMismatch[] = []
@@ -80,6 +80,7 @@ describe('hydration of more documents', () => {
         routes: client.routes,
         components: client.components,
         document,
+        pathname,
         onMismatch: (mismatch) => void found.push(mismatch)
       })
       expect(found).toEqual([])
@@ -94,25 +95,19 @@ describe('hydration of more documents', () => {
 })
 
 describe('payload failures leave the server markup untouched', () => {
-  test('a payload for another route is rejected without changing the DOM', async () => {
-    const { document } = await loadPage(server, '/about', (html) =>
-      html.replace('"routeId":"page:/about"', '"routeId":"page:/users"')
-    )
-    const client = await import('../.gambrel/manifest.client.ts')
-    const before = document.documentElement.outerHTML
-    expect(() =>
-      hydrateRoutes({ routes: client.routes, components: client.components, document })
-    ).toThrow(HydrationPayloadError)
-    expect(document.documentElement.outerHTML).toBe(before)
-  })
-
-  test('a corrupted payload is rejected without changing the DOM', async () => {
-    const { document } = await loadPage(server, '/about', (html) => html.replace('{"version":1,', '{"version":'))
-    const client = await import('../.gambrel/manifest.client.ts')
-    const before = document.documentElement.outerHTML
-    expect(() =>
-      hydrateRoutes({ routes: client.routes, components: client.components, document })
-    ).toThrow(HydrationPayloadError)
-    expect(document.documentElement.outerHTML).toBe(before)
-  })
+  const cases: Array<[string, (html: string) => string]> = [
+    ['a payload for another route', (html) => html.replace('"routeId":"page:/about"', '"routeId":"page:/users"')],
+    ['a corrupted payload', (html) => html.replace('{"version":1,', '{"version":')]
+  ]
+  for (const [label, mutate] of cases) {
+    test(`${label} is rejected without changing the DOM`, async () => {
+      const { document, pathname } = await loadPage(server, '/about', mutate)
+      const client = await import('../.gambrel/manifest.client.ts')
+      const before = document.documentElement.outerHTML
+      expect(() =>
+        hydrateRoutes({ routes: client.routes, components: client.components, document, pathname })
+      ).toThrow(HydrationPayloadError)
+      expect(document.documentElement.outerHTML).toBe(before)
+    })
+  }
 })
