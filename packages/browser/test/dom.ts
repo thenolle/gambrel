@@ -7,6 +7,17 @@ export interface TestDom {
   click(element: Element): void
 }
 
+export interface TestPage {
+  readonly document: Document
+  click(element: Element): void
+}
+
+const SETTINGS = {
+  disableJavaScriptEvaluation: true,
+  disableJavaScriptFileLoading: true,
+  disableCSSFileLoading: true
+}
+
 export function createDom(markup = ''): TestDom {
   const window = new Window()
   const document = window.document as unknown as Document
@@ -21,6 +32,24 @@ export function createDom(markup = ''): TestDom {
       if (found === null) throw new Error(`No element matches '${selector}'`)
       return found
     },
+    click: (element) => {
+      element.dispatchEvent(new window.Event('click', { bubbles: true }) as unknown as Event)
+    }
+  }
+}
+
+/**
+ * Loads a complete HTML document (doctype included) at `url`. Scripts are not executed
+ * or fetched.
+ */
+export function createPage(html: string, url: string): TestPage {
+  const window = new Window({ url, settings: SETTINGS })
+  const document = window.document as unknown as Document
+  document.open()
+  document.write(html)
+  document.close()
+  return {
+    document,
     click: (element) => {
       element.dispatchEvent(new window.Event('click', { bubbles: true }) as unknown as Event)
     }

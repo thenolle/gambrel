@@ -1,5 +1,6 @@
 import { effect, onCleanup, root, untrack } from '@gambrel/reactivity'
 import { assertAttributeName, describeType, eventType, isChildArray, isEventProp, isRawHtml, isReservedProp, isVNode, normalizeAttribute, type Child, type Props, type VNode } from '@gambrel/view'
+import { FRAMEWORK_ATTRIBUTE } from '@gambrel/router'
 
 const ELEMENT_NODE = 1
 const TEXT_NODE = 3
@@ -56,8 +57,12 @@ function quote(value: string | null): string {
   return value === null ? 'no value' : JSON.stringify(value)
 }
 
-function skipDoctype(position: Position): void {
-  while (position.next !== null && position.next.nodeType === DOCUMENT_TYPE_NODE) position.next = position.next.nextSibling
+function isFrameworkNode(node: Node): boolean {
+  return node.nodeType === ELEMENT_NODE && (node as Element).hasAttribute(FRAMEWORK_ATTRIBUTE)
+}
+
+function skipIgnorable(position: Position): void {
+  while (position.next !== null && (position.next.nodeType === DOCUMENT_TYPE_NODE || isFrameworkNode(position.next))) position.next = position.next.nextSibling
 }
 
 function insertNode(position: Position, node: Node): void {
@@ -77,21 +82,21 @@ function removeLeftovers(position: Position, context: RenderContext): void {
   while (position.next !== null) {
     const stale = position.next
     position.next = stale.nextSibling
-    if (stale.nodeType === DOCUMENT_TYPE_NODE) continue
+    if (stale.nodeType === DOCUMENT_TYPE_NODE || isFrameworkNode(stale)) continue
     context.report(`unexpected ${describeNode(stale)} in server markup`, position.parent)
     position.parent.removeChild(stale)
   }
 }
 
-function claimElement(tag: string,position: Position,context: RenderContext): { readonly element: Element; readonly adopted: boolean } {
+function claimElement(tag: string, position: Position, context: RenderContext): { readonly element: Element; readonly adopted: boolean } {
   if (!position.hydrating) {
     const element = context.document.createElement(tag)
     insertNode(position, element)
     return { element, adopted: false }
   }
-  skipDoctype(position)
+  skipIgnorable(position)
   const candidate = position.next
-  if (candidate !== null &&candidate.nodeType === ELEMENT_NODE &&(candidate as Element).localName === tag.toLowerCase()) {
+  if (candidate !== null && candidate.nodeType === ELEMENT_NODE && (candidate as Element).localName === tag.toLowerCase()) {
     position.next = candidate.nextSibling
     return { element: candidate as Element, adopted: true }
   }
@@ -107,7 +112,7 @@ function renderText(text: string, position: Position, context: RenderContext): v
     insertNode(position, context.document.createTextNode(text))
     return
   }
-  skipDoctype(position)
+  skipIgnorable(position)
   const candidate = position.next
   if (candidate !== null && candidate.nodeType === TEXT_NODE) {
     const node = candidate as Text
@@ -136,7 +141,7 @@ function renderRaw(html: string, position: Position, context: RenderContext): vo
       insertNode(position, node)
       continue
     }
-    skipDoctype(position)
+    skipIgnorable(position)
     const candidate = position.next
     if (candidate !== null && candidate.isEqualNode(node)) {
       position.next = candidate.nextSibling
@@ -156,7 +161,7 @@ function bindEvent(element: Element, name: string, handler: unknown): void {
   onCleanup(() => element.removeEventListener(type, listener))
 }
 
-function writeAttribute(element: Element,name: string,value: string | true | null,verify: boolean,context: RenderContext): void {
+function writeAttribute(element: Element, name: string, value: string | true | null, verify: boolean, context: RenderContext): void {
   const expected = value === true ? '' : value
   if (verify) {
     const actual = element.getAttribute(name)
@@ -192,7 +197,7 @@ function applyProps(element: Element, props: Props, adopted: boolean, context: R
 function renderElement(tag: string, props: Props, position: Position, context: RenderContext): void {
   const { element, adopted } = claimElement(tag, position, context)
   applyProps(element, props, adopted, context)
-  const childPosition: Position = {parent: element,next: adopted ? element.firstChild : null,hydrating: adopted}
+  const childPosition: Position = { parent: element, next: adopted ? element.firstChild : null, hydrating: adopted }
   renderChild(props.children, childPosition, context)
   if (adopted) removeLeftovers(childPosition, context)
   const ref = props['ref']

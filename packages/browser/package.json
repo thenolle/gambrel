@@ -12,7 +12,8 @@
   "files": ["src"],
   "dependencies": {
     "@gambrel/reactivity": "workspace:*",
-    "@gambrel/view": "workspace:*"
+    "@gambrel/view": "workspace:*",
+    "@gambrel/router": "workspace:*"
   },
   "devDependencies": {
     "happy-dom": "latest"
