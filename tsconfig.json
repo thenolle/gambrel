@@ -8,6 +8,7 @@
     { "path": "packages/compiler" },
     { "path": "packages/core" },
     { "path": "packages/bun" },
+    { "path": "packages/ssr" },
     { "path": "examples/app" }
   ]
 }
