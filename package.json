@@ -1,0 +1,20 @@
+{
+  "name": "gambrel-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "dev": "bun --watch examples/app/server.ts",
+    "start": "bun examples/app/server.ts",
+    "typecheck": "bun run --filter '@gambrel/*' typecheck",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}

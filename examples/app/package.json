@@ -1,0 +1,15 @@
+{
+  "name": "@gambrel/example-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@gambrel/bun": "workspace:*",
+    "@gambrel/core": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun --watch server.ts",
+    "start": "bun server.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/reactivity" },
+    { "path": "packages/view" },
+    { "path": "packages/browser" },
+    { "path": "packages/router" },
+    { "path": "packages/compiler" },
+    { "path": "packages/core" },
+    { "path": "packages/bun" },
+    { "path": "examples/app" }
+  ]
+}
