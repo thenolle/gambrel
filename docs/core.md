@@ -1,42 +1,114 @@
-# @gambrel/core and @gambrel/bun
+# @gambrel/core
 
-## Application
+The server application layer: routes, request context, middleware and response helpers. It works with the standard `Request` and `Response`, so it does not depend on Bun, JSX or the DOM. Pair it with [@gambrel/bun](./bun.md) to serve it.
 
-`createApp({ development? })` returns an `App`. Register routes with `get`, `post`, `put`, `patch`, `delete`, `options` or `route(method, path, handler)`. Every method returns the app for chaining. `app.fetch(request)` is the only server interface.
+## Quick example
 
-## Paths
+```ts
+import { createApp, json } from '@gambrel/core'
 
-- Static segments and `:name` parameters. Parameter names match `[A-Za-z_][A-Za-z0-9_]*` and must be unique per route.
-- Trailing and doubled slashes are ignored. The query string is never matched.
-- The path is percent-decoded segment by segment before matching. Malformed encoding returns 400.
-- Where two routes match the same URL, the first position at which they differ decides: static beats param.
-- Routes with the same method and shape throw at registration.
+const app = createApp()
+  .get('/', () => 'Hello')
+  .get('/users/:id', (ctx) => json({ id: ctx.params.id }))
 
-## Handlers and results
+const response = await app.fetch(new Request('http://localhost/users/42'))
+console.log(await response.json()) // { id: '42' }
+```
 
-A handler receives `{ request, url, method, params }` and returns a `Response` or a string. Strings become `text/plain; charset=utf-8`. Any other return value is a `TypeError` that produces a 500. Helpers: `text`, `html`, `json`, `redirect`.
+Every registration method returns the app, so calls chain.
 
-## Responses for non-matches
+## createApp
 
-- Path matches but method does not: 405 with an `Allow` header.
-- Nothing matches: 404 from `notFound` (default plain text).
+```ts
+createApp(options?: { development?: boolean }): App
+```
+
+`development` (default `false`) makes the default 500 response include the error stack. Leave it off in production.
+
+## Registering routes
+
+| Method                                             | Meaning                                            |
+| -------------------------------------------------- | -------------------------------------------------- |
+| `get`, `post`, `put`, `patch`, `delete`, `options` | Register a handler for that method and path        |
+| `route(method, path, handler)`                     | The same with the method as an argument            |
+| `use(middleware)`                                  | Add middleware                                     |
+| `notFound(handler)`                                | Handle requests that no route matched              |
+| `onError(handler)`                                 | Handle errors thrown by handlers                   |
+| `fetch(request)`                                   | Process a `Request`, returns a `Promise<Response>` |
+
+Paths start with `/` and use `:name` for parameters. Names match `[A-Za-z_][A-Za-z0-9_]*` and must be unique within a path. Params are typed from the path literal:
+
+```ts
+app.get('/users/:id/posts/:postId', (ctx) => {
+  return `${ctx.params.id} / ${ctx.params.postId}` // both are strings
+})
+```
+
+> [!NOTE]
+> Core paths use `:id`. File routes use `[id]` folder names. They are different systems: core serves your API routes, file routes serve pages.
+
+Registering two routes with the same method and shape (for example `/a/:x` and `/a/:y`) throws immediately.
+
+## Matching rules
+
+- A trailing slash or doubled slash is ignored. The query string is never matched.
+- Where several routes match, the first segment at which they differ decides: a static segment beats a parameter.
+- Paths are percent-decoded per segment. Malformed encoding answers `400`.
+- If the path matches a route but the method does not, the answer is `405` with an `Allow` header.
+- If nothing matches, the `notFound` handler answers (default: plain-text `404`).
+
+## The context
+
+| Field     | Type         | Meaning                 |
+| --------- | ------------ | ----------------------- |
+| `request` | `Request`    | The incoming request    |
+| `url`     | `URL`        | The parsed request URL  |
+| `method`  | `string`     | Upper-case method       |
+| `params`  | typed record | Decoded path parameters |
+
+## What a handler returns
+
+| Return value                          | Response                               |
+| ------------------------------------- | -------------------------------------- |
+| A `Response`                          | Used as it is                          |
+| A string                              | `200` with `text/plain; charset=utf-8` |
+| A promise of either                   | Awaited                                |
+| Anything else (including `undefined`) | A `TypeError`, answered as a 500       |
+
+## Response helpers
+
+| Helper                             | Result                                                                      |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `text(body, init?)`                | `text/plain; charset=utf-8`                                                 |
+| `html(body, init?)`                | `text/html; charset=utf-8`. The body is sent as it is.                      |
+| `json(data, init?)`                | `application/json; charset=utf-8`. Throws for values JSON cannot represent. |
+| `redirect(location, status = 302)` | A bodyless redirect. Status 301, 302, 303, 307 or 308.                      |
+
+A `content-type` you pass in `init.headers` is kept.
 
 ## Middleware
 
-`use((ctx, next) => ...)`, executed in registration order, outermost first, around every request including 400, 404 and 405 responses. Calling `next()` twice throws.
+```ts
+app.use(async (ctx, next) => {
+  const started = performance.now()
+  const response = await next()
+  console.log(`${ctx.method} ${ctx.url.pathname} ${response.status} ${(performance.now() - started).toFixed(1)}ms`)
+  return response
+})
+```
+
+- Middleware runs in registration order, outermost first, around **every** request, including 400, 404 and 405 responses.
+- Return a response without calling `next()` to short-circuit.
+- Calling `next()` twice is an error.
 
 ## Errors
 
-Thrown errors go to `onError`. The default logs the error and returns `Internal Server Error`, or the stack when `development: true`.
+A throw in a handler or middleware goes to `onError(error, ctx)`. The default logs the error with `console.error` and answers `500 Internal Server Error`, or the stack when `development` is `true`. If your error handler throws, the answer is a plain 500.
 
-## Not implemented
+```ts
+app.onError((error) => json({ error: 'Something went wrong' }, { status: 500 }))
+```
 
-Automatic HEAD and OPTIONS handling for explicit core routes. (Document routes served by `@gambrel/ssr` do answer HEAD.)
+## Not included
 
-## Static files
-
-`staticFiles` in `@gambrel/bun` serves a directory under a URL prefix; see `docs/build.md`.
-
-## Bun adapter
-
-`serve(app, { port?, hostname?, development? })` calls `Bun.serve` and returns `{ url, stop(closeActiveConnections?) }`. It has no routing or rendering logic.
+Automatic `HEAD` and `OPTIONS` answers for explicit routes, cookies, body parsing helpers and sessions. Read the body from `ctx.request` with the standard `request.json()` and friends.

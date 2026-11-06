@@ -35,13 +35,16 @@
     {
       "title": "Reference",
       "pages": [
-        { "title": "Router", "path": "router" },
-        { "title": "Compiler", "path": "compiler" },
-        { "title": "Build and development", "path": "build" },
-        { "title": "Core and Bun adapter", "path": "core" },
-        { "title": "View and JSX", "path": "view" },
-        { "title": "Reactivity", "path": "reactivity" },
-        { "title": "Browser runtime", "path": "browser" }
+        { "title": "Cheat sheet", "path": "cheatsheet", "summary": "Files, commands, imports and statuses on one page." },
+        { "title": "@gambrel/core", "path": "core" },
+        { "title": "@gambrel/bun", "path": "bun" },
+        { "title": "@gambrel/view", "path": "view" },
+        { "title": "@gambrel/reactivity", "path": "reactivity" },
+        { "title": "@gambrel/browser", "path": "browser" },
+        { "title": "@gambrel/router", "path": "router" },
+        { "title": "@gambrel/ssr", "path": "ssr" },
+        { "title": "@gambrel/compiler", "path": "compiler" },
+        { "title": "Build output", "path": "build" }
       ]
     }
   ]

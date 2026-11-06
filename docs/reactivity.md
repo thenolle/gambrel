@@ -1,21 +1,79 @@
 # @gambrel/reactivity
 
-| API                            | Behaviour                                                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `signal(initial, { equals? })` | Callable value. `s()` reads and tracks, `s.set(v)`, `s.update(fn)`, `s.peek()`. Equal writes (default `Object.is`) are ignored. |
-| `effect(fn)`                   | Runs now and when tracked signals change. May return a cleanup. Returns a dispose function.                                     |
-| `batch(fn)`                    | Effects run once after the outermost batch.                                                                                     |
-| `untrack(fn)`                  | Reads inside do not subscribe.                                                                                                  |
-| `root(fn)`                     | Detached ownership scope. `fn` receives `dispose`.                                                                              |
-| `onCleanup(fn)`                | Registers a cleanup on the current effect or root. Throws outside one.                                                          |
+Signals, effects and ownership: the smallest reactive core that the browser runtime and your components need. It has no dependencies.
 
-## Rules
+```ts
+import { batch, effect, onCleanup, root, signal, untrack } from '@gambrel/reactivity'
+```
 
-- Dependencies are re-tracked on every run, so stale subscriptions are dropped.
-- Before a re-run, an effect disposes the effects it created, then runs its cleanups in LIFO order.
-- Effects created with no owner live until their dispose function is called.
-- Writes inside an effect are queued and flushed after the outermost running effect finishes. Effects never run nested.
-- An effect does not re-run because of its own writes (including writes by effects it creates).
-- A flush aborts with an `Effect cycle detected` error after 10,000 effect runs.
-- Errors are rethrown to the writer: one error as is, several as an `AggregateError`.
-- No `computed`: derive with plain functions, `() => count() * 2`.
+## signal
+
+```ts
+const count = signal(0)
+count()                       // 0, and subscribes the running effect
+count.set(5)                  // replace the value
+count.update((n) => n + 1)    // compute the next value
+count.peek()                  // read without subscribing
+```
+
+A signal is a function, so it also works as an accessor in JSX: `<p>{count}</p>`.
+
+```ts
+signal(initial, { equals?: (previous, next) => boolean })
+```
+
+Writes that are equal to the current value (default `Object.is`) are ignored. Pass `equals` for custom rules.
+
+## effect
+
+```ts
+const dispose = effect(() => {
+  console.log(count())
+  return () => console.log('cleaning up') // optional
+})
+```
+
+| Behavior       | Detail                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------- |
+| First run      | Immediately                                                                                   |
+| Re-run         | When a signal it read changes                                                                 |
+| Dependencies   | Re-collected on every run, so stale subscriptions are dropped                                 |
+| Cleanup        | The returned function and any `onCleanup` run before each re-run and on dispose, newest first |
+| Nested effects | Owned by the outer effect and disposed before it re-runs                                      |
+| Return value   | A function that disposes the effect                                                           |
+
+## batch, untrack, root
+
+```ts
+batch(() => {              // effects run once, after the batch
+  a.set(1)
+  b.set(2)
+})
+
+untrack(() => count())      // read without subscribing
+
+root((dispose) => {         // a detached scope
+  effect(() => { /* ... */ })
+  onCleanup(() => { /* ... */ })
+  return dispose            // call later to release everything
+})
+```
+
+## onCleanup
+
+```ts
+onCleanup(() => clearInterval(id))
+```
+
+Registers a cleanup on the current effect or root. Outside of one it throws `onCleanup() must be called inside an effect or root()`. Effects created with no owner live until you call the function `effect()` returned.
+
+## Timing rules
+
+- Writes made inside an effect are queued and applied after the **outermost** running effect finishes, so effects never run nested.
+- An effect does not re-run because of its own writes.
+- If effects keep re-triggering each other, the flush stops after 10,000 runs with `Effect cycle detected`.
+- Errors thrown by an effect reach the code that wrote the signal. One error is rethrown as it is, several become an `AggregateError`. Nothing is swallowed.
+
+## Not included
+
+There is no `computed`. Derive values with plain functions: `() => count() * 2`. This keeps the graph small, and it works anywhere a reactive accessor is accepted.
