@@ -11,7 +11,9 @@ Monorepo-only prototype. Packages export TypeScript source and are consumed thro
 | `@gambrel/reactivity` | Signals, effects, cleanup                          | none                                   |
 | `@gambrel/view`       | VNodes, JSX runtime, server renderer               | `@gambrel/reactivity` (only if needed) |
 | `@gambrel/browser`    | Mount, hydrate, DOM updates, events                | `view`, `reactivity`                   |
-| `@gambrel/router`     | Matching, layouts, guards, loaders, manifest types | `view` (types only)                    |
+| `@gambrel/router`     | Matching, resolution, hydration payload, `composeRoute` | `view` (types, and `createElement` for `composeRoute`) |
+| `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes` | `view`, `reactivity`, `router` |
+| `@gambrel/ssr`        | Document request handler | `router`, `view` |
 | `@gambrel/compiler`   | Route discovery, manifests, builds                 | `router` (types)                       |
 | `@gambrel/core`       | Server app, context, response normalization        | none                                   |
 | `@gambrel/bun`        | `Bun.serve` adapter                                | `core`                                 |
@@ -20,8 +22,9 @@ Monorepo-only prototype. Packages export TypeScript source and are consumed thro
 
     reactivity
     view     -> reactivity (optional)
-    browser  -> view, reactivity
-    router   -> view (types)
+    browser  -> view, reactivity, router
+    router   -> view
+    ssr      -> router, view
     compiler -> router (types)
     core
     bun      -> core

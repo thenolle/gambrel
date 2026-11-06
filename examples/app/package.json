@@ -6,13 +6,20 @@
   "dependencies": {
     "@gambrel/browser": "workspace:*",
     "@gambrel/bun": "workspace:*",
+    "@gambrel/compiler": "workspace:*",
     "@gambrel/core": "workspace:*",
     "@gambrel/reactivity": "workspace:*",
+    "@gambrel/router": "workspace:*",
+    "@gambrel/ssr": "workspace:*",
     "@gambrel/view": "workspace:*"
   },
+  "devDependencies": {
+    "happy-dom": "latest"
+  },
   "scripts": {
-    "dev": "bun --watch server.ts",
-    "start": "bun server.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "generate": "bun scripts/generate.ts",
+    "dev": "bun run generate && bun --watch src/server.ts",
+    "start": "bun run generate && bun src/server.ts",
+    "typecheck": "bun run generate && tsc -p tsconfig.json"
   }
 }

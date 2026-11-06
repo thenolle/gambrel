@@ -8,8 +8,8 @@
     "examples/*"
   ],
   "scripts": {
-    "dev": "bun --watch examples/app/server.ts",
-    "start": "bun examples/app/server.ts",
+    "dev": "bun run --filter @gambrel/example-app dev",
+    "start": "bun run --filter @gambrel/example-app start",
     "typecheck": "bun run --filter '@gambrel/*' typecheck",
     "test": "bun test"
   },
