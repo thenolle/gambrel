@@ -1,0 +1,5 @@
+<svg viewBox="0 0 24 24">
+  <path d="M8 4H4v18h16V4h-4"/>
+  <rect x="8" y="2" width="8" height="4" rx="1"/>
+  <path d="M8 11h1m3 0h4M8 16h1m3 0h4"/>
+</svg>

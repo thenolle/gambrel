@@ -63,6 +63,54 @@ The generator checks every file and reports all problems together:
 
 Draw dots as a zero-length line, for example `M12 12h.01`: the round cap makes them a dot.
 
+## Expanded categories
+
+The library includes an additional batch of 104 drawings across eight categories:
+
+| Category              | Examples                                                   |
+| --------------------- | ---------------------------------------------------------- |
+| Files and development | FilePlus, FileSearch, FolderOpen, GitMerge, TerminalSquare |
+| Navigation and layout | PanelRight, LayoutRows, CornerUpLeft, MoveHorizontal       |
+| Forms and editing     | ClipboardCheck, ListOrdered, TextCursor, Eraser            |
+| Communication         | MessageCircle, MailOpen, PhoneIncoming, Inbox              |
+| Media                 | Camera, Video, Music, Headphones, Film                     |
+| Commerce              | Receipt, Wallet, Store, Truck, Gift                        |
+| Status                | CircleMinus, BadgeCheck, Timer, Hourglass                  |
+| Devices               | Laptop, Router, Bluetooth, Plug, Battery                   |
+
+Use named imports:
+
+```tsx
+/** @jsxImportSource @gambrel/view */
+import { FilePlus, MessageCircle, Receipt } from '@gambrel/icons'
+
+export function Actions() {
+  return (
+    <div>
+      <button type="button">
+        <FilePlus size={16} />
+        New file
+      </button>
+      <button type="button" aria-label="Messages">
+        <MessageCircle size={16} />
+      </button>
+      <Receipt size={20} title="Receipt" />
+    </div>
+  )
+}
+```
+
+Named icon components use PascalCase. The registry uses the corresponding kebab-case names, such as `file-plus`.
+
+Regenerate after editing SVG sources:
+
+```bash
+bun run --filter @gambrel/icons generate
+bun run --filter @gambrel/icons preview
+```
+
+Automated validation checks structure, generated exports and rendering. Review the preview visually before releasing changed drawings.
+
 ### See what you drew
 
 ```bash
