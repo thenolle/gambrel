@@ -51,4 +51,12 @@ describe('highlight', () => {
       expect(unescapeHtml(highlight(code, lang).replace(/<[^>]+>/g, ''))).toBe(code)
     }
   })
+
+  test('command names inside URLs and file names are not commands', () => {
+    const html = highlight('git clone https://github.com/acme/demo.git', 'bash')
+    expect(html).toContain('<span class="tok-f">git</span> clone')
+    expect(html).toContain('demo.git')
+    expect(html).not.toContain('demo.<span')
+    expect(highlight('cat bun.lock', 'bash')).toContain('bun.lock')
+  })
 })

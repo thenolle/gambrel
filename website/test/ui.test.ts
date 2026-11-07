@@ -4,6 +4,7 @@ import { renderLanding } from '../src/landing.ts'
 import { flatten, parseNav } from '../src/nav.ts'
 import { readingMinutes } from '../src/reading.ts'
 import { resolveTheme } from '../src/theme.ts'
+import { unescapeHtml } from '../src/escape.ts'
 
 const nav = parseNav({
   title: 'Demo <docs>',
@@ -48,9 +49,10 @@ describe('landing page', () => {
   })
 
   test('shows install commands derived from the repository', () => {
-    const html = renderLanding(nav)
-    expect(html).toContain('git clone https://github.com/acme/demo.git')
-    expect(html).toContain('cd demo')
+    const text = unescapeHtml(renderLanding(nav).replace(/<[^>]+>/g, ''))
+    expect(text).toContain('git clone https://github.com/acme/demo.git')
+    expect(text).toContain('cd demo && bun install')
+    expect(text).toContain('bun run build && bun run start')
   })
 
   test('falls back to the first page when there is no getting-started page', () => {

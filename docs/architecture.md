@@ -9,6 +9,7 @@ Gambrel is a set of small packages with explicit boundaries. Each one has a sing
 | `@gambrel/core`       | Server application: routes, context, middleware, responses | nothing                        |
 | `@gambrel/bun`        | `Bun.serve` adapter and static files                       | `core`                         |
 | `@gambrel/view`       | JSX runtime and server renderer                            | nothing                        |
+| `@gambrel/icons`      | Icon components                                            | `view`                         |
 | `@gambrel/reactivity` | Signals, effects, ownership                                | nothing                        |
 | `@gambrel/router`     | Matching, resolution, hydration payload, `composeRoute`    | `view`                         |
 | `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                            | `view`, `reactivity`, `router` |

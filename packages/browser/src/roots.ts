@@ -32,7 +32,7 @@ export function mount(container: Element, tree: Child): MountedRoot {
   removeAllChildren(container)
   const context: RenderContext = { document: container.ownerDocument, root: container, report: () => undefined }
   const dispose = root((disposeRoot) => {
-    renderChild(tree, { parent: container, next: null, hydrating: false }, context)
+    renderChild(tree, { parent: container, next: null, hydrating: false, svg: false }, context)
     return disposeRoot
   })
   return {
@@ -63,7 +63,7 @@ export function hydrate(container: Element | Document, tree: Child, options: Hyd
       handle(mismatch)
     }
   }
-  const position: Position = { parent: container, next: container.firstChild, hydrating: true }
+  const position: Position = { parent: container, next: container.firstChild, hydrating: true, svg: false }
   const dispose = root((disposeRoot) => {
     renderChild(tree, position, context)
     removeLeftovers(position, context)

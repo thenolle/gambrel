@@ -21,7 +21,6 @@ Gambrel is a prototype that does a small number of things carefully. This page l
 | Synchronous route components              | Pages and layouts cannot be `async`, because they also run in the browser.                      |
 | No streaming and no Suspense              | A document is rendered completely before it is sent.                                            |
 | Whole-region updates                      | A reactive region re-renders all of its content. There is no keyed list diffing.                |
-| No SVG namespace                          | The browser runtime creates HTML elements only.                                                 |
 | Page-level errors only                    | A failure while rendering gives a 500 for the whole page. There are no nested error boundaries. |
 | Loaders run in sequence                   | They run one after another, on every request, with no built-in cache.                           |
 | Minimal event types                       | Handlers receive a small structural `ViewEvent`; cast `currentTarget` for DOM members.          |

@@ -1,0 +1,28 @@
+{
+  "name": "@gambrel/icons",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A hand-drawn SVG icon library for Gambrel: one tree-shakable component per icon, generated from plain SVG files.",
+  "license": "PolyForm-Strict-1.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./registry": {
+      "types": "./src/registry.ts",
+      "default": "./src/registry.ts"
+    }
+  },
+  "files": ["src", "svg"],
+  "dependencies": {
+    "@gambrel/view": "workspace:*"
+  },
+  "scripts": {
+    "generate": "bun scripts/generate.ts",
+    "preview": "bun scripts/preview.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

@@ -7,3 +7,4 @@ dist
 .env.*
 website/public/app.js
 website/dist
+packages/icons/preview.html

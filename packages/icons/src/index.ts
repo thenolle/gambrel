@@ -1,0 +1,7 @@
+export { createIcon } from './create-icon.ts'
+export { renderIconSvg } from './svg.ts'
+export { iconNames } from './generated/names.ts'
+export * from './generated/icons.ts'
+export type { IconName } from './generated/names.ts'
+export type { SvgOptions } from './svg.ts'
+export type { IconComponent, IconNode, IconProps } from './types.ts'

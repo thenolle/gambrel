@@ -76,6 +76,7 @@ export default function GreetingPage(props: PageProps<ParamsOf<'/hello/[name]'>,
 | `@gambrel/core`       | Server application: routes, context, middleware, responses |
 | `@gambrel/bun`        | `Bun.serve` adapter and static files                       |
 | `@gambrel/view`       | JSX runtime and server renderer                            |
+| `@gambrel/icons`      | Icon components, built on `@gambrel/view`                  |
 | `@gambrel/reactivity` | Signals, effects, ownership                                |
 | `@gambrel/router`     | Matching, resolution, hydration payload                    |
 | `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                            |

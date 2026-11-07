@@ -76,6 +76,7 @@ Text merged by the HTML parser is split during hydration. Doctype nodes and node
 - `ref={(element) => ...}` is called with the element after its children are rendered.
 - A function child re-renders its whole region when it changes (no keyed diffing).
 - Components run once and must be synchronous.
+- `svg` elements and their descendants are created in the SVG namespace; children of `foreignObject` are HTML again.
 
 ## Not supported
 

@@ -56,6 +56,13 @@
       "name": "@gambrel/core",
       "version": "0.1.0",
     },
+    "packages/icons": {
+      "name": "@gambrel/icons",
+      "version": "0.1.0",
+      "dependencies": {
+        "@gambrel/view": "workspace:*",
+      },
+    },
     "packages/reactivity": {
       "name": "@gambrel/reactivity",
       "version": "0.1.0",
@@ -98,6 +105,8 @@
     "@gambrel/core": ["@gambrel/core@workspace:packages/core"],
 
     "@gambrel/example-app": ["@gambrel/example-app@workspace:examples/app"],
+
+    "@gambrel/icons": ["@gambrel/icons@workspace:packages/icons"],
 
     "@gambrel/reactivity": ["@gambrel/reactivity@workspace:packages/reactivity"],
 

@@ -33,6 +33,12 @@
       ]
     },
     {
+      "title": "Libraries",
+      "pages": [
+        { "title": "@gambrel/icons", "path": "icons", "summary": "A hand-drawn icon library, generated from SVG files." }
+      ]
+    },
+    {
       "title": "Reference",
       "pages": [
         { "title": "Cheat sheet", "path": "cheatsheet", "summary": "Files, commands, imports and statuses on one page." },

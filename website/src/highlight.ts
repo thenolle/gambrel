@@ -11,14 +11,10 @@ interface Language {
 }
 
 const BACKTICK_STRING = '`(?:\\\\.|[^`\\\\])*`'
-const SCRIPT_KEYWORDS =
-  'import|export|from|default|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|class|extends|implements|interface|type|enum|async|await|try|catch|finally|throw|typeof|instanceof|in|of|as|satisfies|readonly|declare|namespace|void|null|undefined|true|false|this|super|yield|static|public|private|protected|abstract|keyof|unique|infer|is|asserts|override'
+const SCRIPT_KEYWORDS = 'import|export|from|default|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|class|extends|implements|interface|type|enum|async|await|try|catch|finally|throw|typeof|instanceof|in|of|as|satisfies|readonly|declare|namespace|void|null|undefined|true|false|this|super|yield|static|public|private|protected|abstract|keyof|unique|infer|is|asserts|override'
 
 const COMMENT_SLASH: Rule = { cls: 'c', source: String.raw`\/\/[^\n]*|\/\*[\s\S]*?\*\/` }
-const STRINGS: Rule = {
-  cls: 's',
-  source: String.raw`'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|` + BACKTICK_STRING
-}
+const STRINGS: Rule = { cls: 's', source: String.raw`'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|` + BACKTICK_STRING }
 
 const SCRIPT_RULES: readonly Rule[] = [
   COMMENT_SLASH,
@@ -51,7 +47,7 @@ const LANGUAGES: Readonly<Record<string, Language>> = {
       { cls: 's', source: String.raw`'[^'\n]*'|"(?:\\.|[^"\\\n])*"` },
       { cls: 'v', source: String.raw`\$\{[^}\n]*\}|\$[A-Za-z_]\w*|\b[A-Z][A-Z0-9_]*(?==)` },
       { cls: 'p', source: String.raw`(?<=\s)--?[A-Za-z][\w-]*` },
-      { cls: 'f', source: String.raw`\b(?:bun|git|cd|curl|echo|export|mkdir|rm|cp|mv|cat|grep|ls|sed|npm|node|tsc)\b` }
+      { cls: 'f', source: String.raw`(?<![\w./:@-])(?:bun|git|cd|curl|echo|export|mkdir|rm|cp|mv|cat|grep|ls|sed|npm|node|tsc)(?![\w./:@-])` }
     ]
   },
   html: {
@@ -91,7 +87,6 @@ export function highlight(code: string, lang: string): string {
   const alias = ALIASES[lang.toLowerCase()]
   const language = alias === undefined ? undefined : LANGUAGES[alias]
   if (language === undefined) return escapeHtml(code)
-
   let output = ''
   let last = 0
   for (const match of code.matchAll(regexFor(language))) {

@@ -9,6 +9,7 @@ const DOCUMENT_NODE = 9
 const DOCUMENT_TYPE_NODE = 10
 
 const PROPERTY_ATTRIBUTES: ReadonlySet<string> = new Set(['value', 'checked', 'selected'])
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
 export interface HydrationMismatch {
   readonly message: string
@@ -23,6 +24,7 @@ export interface Position {
   parent: Node
   next: Node | null
   readonly hydrating: boolean
+  readonly svg: boolean
 }
 
 export interface RenderContext {
@@ -88,20 +90,24 @@ function removeLeftovers(position: Position, context: RenderContext): void {
   }
 }
 
+function createNode(tag: string, position: Position, context: RenderContext): Element {
+  return position.svg || tag === 'svg' ? context.document.createElementNS(SVG_NAMESPACE, tag) : context.document.createElement(tag)
+}
+
 function claimElement(tag: string, position: Position, context: RenderContext): { readonly element: Element; readonly adopted: boolean } {
   if (!position.hydrating) {
-    const element = context.document.createElement(tag)
+    const element = createNode(tag, position, context)
     insertNode(position, element)
     return { element, adopted: false }
   }
   skipIgnorable(position)
   const candidate = position.next
-  if (candidate !== null && candidate.nodeType === ELEMENT_NODE && (candidate as Element).localName === tag.toLowerCase()) {
+  if (candidate !== null && candidate.nodeType === ELEMENT_NODE && (candidate as Element).localName.toLowerCase() === tag.toLowerCase()) {
     position.next = candidate.nextSibling
     return { element: candidate as Element, adopted: true }
   }
   context.report(`expected <${tag}> but found ${describeNode(candidate)}`, position.parent)
-  const element = context.document.createElement(tag)
+  const element = createNode(tag, position, context)
   replaceStale(position, element)
   return { element, adopted: false }
 }
@@ -197,7 +203,12 @@ function applyProps(element: Element, props: Props, adopted: boolean, context: R
 function renderElement(tag: string, props: Props, position: Position, context: RenderContext): void {
   const { element, adopted } = claimElement(tag, position, context)
   applyProps(element, props, adopted, context)
-  const childPosition: Position = { parent: element, next: adopted ? element.firstChild : null, hydrating: adopted }
+  const childPosition: Position = {
+    parent: element,
+    next: adopted ? element.firstChild : null,
+    hydrating: adopted,
+    svg: tag === 'foreignObject' ? false : position.svg || tag === 'svg'
+  }
   renderChild(props.children, childPosition, context)
   if (adopted) removeLeftovers(childPosition, context)
   const ref = props['ref']
@@ -246,7 +257,7 @@ function renderDynamic(accessor: () => Child, position: Position, context: Rende
         const parent = end.parentNode
         if (parent === null) return disposeRoot
         const fragment = context.document.createDocumentFragment()
-        renderChild(value, { parent: fragment, next: null, hydrating: false }, context)
+        renderChild(value, { parent: fragment, next: null, hydrating: false, svg: position.svg }, context)
         removeBetween(start, end)
         parent.insertBefore(fragment, end)
         return disposeRoot
