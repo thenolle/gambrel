@@ -1,6 +1,6 @@
 /** @jsxImportSource @gambrel/view */
 import { X } from '@gambrel/icons'
-import { effect } from '@gambrel/reactivity'
+import { bindModal } from '../lib/modal.ts'
 import type { Child } from '@gambrel/view'
 import { cn } from '../lib/cn.ts'
 import { renderTrigger, type Trigger, type TriggerProps } from '../lib/overlay.ts'
@@ -69,24 +69,22 @@ function Modal(props: ModalProps): Child {
         aria-describedby={description === undefined ? undefined : `${id}-description`}
         class={cn('gb-dialog', variantClass, className)}
         ref={(element: Element) => {
-          const dialog = element as HTMLDialogElement
-          effect(() => {
-            const wanted = state.get()
-            if (wanted && !dialog.open) {
-              try {
-                dialog.showModal()
-              } catch {
-                dialog.setAttribute('open', '')
-              }
-            } else if (!wanted && dialog.open) {
-              if (typeof dialog.close === 'function') dialog.close()
-              else dialog.removeAttribute('open')
-            }
-          })
+          bindModal(element as HTMLDialogElement, state.get, close)
         }}
-        onClose={close}
         onClick={(event) => {
-          if (dismissOnBackdrop && event.target === event.currentTarget) close()
+          if (!dismissOnBackdrop || event.target !== event.currentTarget) return
+
+          const dialog = event.currentTarget as HTMLDialogElement
+          const pointer = event as unknown as MouseEvent
+          const bounds = dialog.getBoundingClientRect()
+
+          const outside =
+            pointer.clientX < bounds.left ||
+            pointer.clientX > bounds.right ||
+            pointer.clientY < bounds.top ||
+            pointer.clientY > bounds.bottom
+
+          if (outside) close()
         }}
       >
         <div class="gb-dialog-panel">

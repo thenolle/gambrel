@@ -189,6 +189,54 @@ import { Button, toast, Toaster } from '@gambrel/components'
 
 See [Application UI](./component-application.md) for Command, Combobox, navigation and sidebar primitives, Toolbar, EmptyState, StatCard, DescriptionList, Stepper and DataTable.
 
+## Overlay lifecycle and nested dismissal
+
+Open modal, popover and dropdown layers participate in a document-local dismissal stack. Escape dismisses only the topmost registered layer.
+
+A pointer press outside a popover or dropdown dismisses only that topmost layer. A pointer press inside it does not dismiss its parent.
+
+Use the function form of `trigger` when the actual button needs the ARIA props:
+
+```tsx
+<Popover
+  id="filters"
+  trigger={(props) => <Button {...props}>Filters</Button>}
+>
+  Filter controls
+</Popover>
+```
+
+Popover and menu cleanup removes document listeners. Closing with Escape restores trigger focus. If the user clicks another control outside the panel, focus is not forcibly moved back.
+
+### Controlled dialogs
+
+```tsx
+const open = signal(false)
+
+<Dialog
+  id="edit-profile"
+  title="Edit profile"
+  open={open}
+  onOpenChange={open.set}
+/>
+```
+
+Escape and native cancel request a state change. A controlled parent can decline it by keeping `open` true.
+
+Dialogs require native `showModal()` support. Gambrel does not silently fall back to a non-modal `open` attribute, because that would lose the expected modal behavior.
+
+The server renders dialogs closed. They open during browser setup when their initial state requires it.
+
+### Tooltip cleanup
+
+Tooltip timers are canceled when disposed. A focused descendant receives the tooltip's `aria-describedby` ID in addition to any existing description IDs; the original value is restored on disposal.
+
+Hover and keyboard focus are tracked separately, so leaving with the pointer does not hide a tooltip while its control remains focused.
+
+### Verification boundary
+
+Automated tests use happy-dom for lifecycle, state and focus assertions. Native focus trapping, backdrop behavior and browser top-layer rendering still require real-browser verification.
+
 ## Add a component
 
 1. Create `src/components/<name>.tsx`. For a simple wrapper, one line is enough:
