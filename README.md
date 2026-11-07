@@ -37,11 +37,14 @@ bun run docs       # http://localhost:4000
 bun run docs:build # static site in website/dist
 ```
 
-| Start here                                   | Concepts                                                   | Reference                           |
-| -------------------------------------------- | ---------------------------------------------------------- | ----------------------------------- |
-| [Introduction](./docs/introduction.md)       | [Routing and layouts](./docs/routing.md)                   | [Cheat sheet](./docs/cheatsheet.md) |
-| [Getting started](./docs/getting-started.md) | [Server/client boundary](./docs/server-client-boundary.md) | [@gambrel/core](./docs/core.md)     |
-| [Tutorial](./docs/tutorial.md)               | [SSR and hydration](./docs/ssr-hydration.md)               | [@gambrel/router](./docs/router.md) |
+| Section    | Pages                                                                                                                                                                                                                                                                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Start here | [Introduction](./docs/introduction.md) · [Getting started](./docs/getting-started.md) · [Tutorial: a bookshelf](./docs/tutorial.md)                                                                                                                                                                                                                                             |
+| Concepts   | [Routing and layouts](./docs/routing.md) · [The server/client boundary](./docs/server-client-boundary.md) · [SSR and hydration](./docs/ssr-hydration.md) · [Architecture](./docs/architecture.md)                                                                                                                                                                               |
+| Guides     | [Loaders](./docs/loaders.md) · [Guards and redirects](./docs/guards.md) · [Errors and 404 pages](./docs/error-pages.md) · [Interactivity](./docs/interactivity.md) · [Configuration](./docs/configuration.md) · [Deployment](./docs/deployment.md) · [Testing your app](./docs/testing.md) · [Troubleshooting](./docs/troubleshooting.md)                                       |
+| Libraries  | [@gambrel/icons](./docs/icons.md) · [@gambrel/components](./docs/components.md) · [Form components](./docs/component-forms.md) · [Application UI](./docs/component-application.md)                                                                                                                                                                                              |
+| Reference  | [Cheat sheet](./docs/cheatsheet.md) · [@gambrel/core](./docs/core.md) · [@gambrel/bun](./docs/bun.md) · [@gambrel/view](./docs/view.md) · [@gambrel/reactivity](./docs/reactivity.md) · [@gambrel/browser](./docs/browser.md) · [@gambrel/router](./docs/router.md) · [@gambrel/ssr](./docs/ssr.md) · [@gambrel/compiler](./docs/compiler.md) · [Build output](./docs/build.md) |
+| Project    | [Publishing to npm](./docs/publishing.md) · [Limitations and roadmap](./docs/limitations.md) · [Security](./docs/security.md) · [Working on Gambrel](./docs/development.md) · [License](./docs/license.md)                                                                                                                                                                      |
 
 ## A minimal example
 
@@ -71,18 +74,18 @@ export default function GreetingPage(props: PageProps<ParamsOf<'/hello/[name]'>,
 
 ## Packages
 
-| Package               | Responsibility                                             |
-| --------------------- | ---------------------------------------------------------- |
-| `@gambrel/core`       | Server application: routes, context, middleware, responses |
-| `@gambrel/bun`        | `Bun.serve` adapter and static files                       |
-| `@gambrel/view`       | JSX runtime and server renderer                            |
-| `@gambrel/icons`      | Icon components; depends on `@gambrel/view`                |
-| `@gambrel/reactivity` | Signals, effects, ownership                                |
+| Package               | Responsibility                                                                      |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| `@gambrel/core`       | Server application: routes, context, middleware, responses                          |
+| `@gambrel/bun`        | `Bun.serve` adapter and static files                                                |
+| `@gambrel/view`       | JSX runtime and server renderer                                                     |
+| `@gambrel/icons`      | Icon components; depends on `@gambrel/view`                                         |
+| `@gambrel/reactivity` | Signals, effects, ownership                                                         |
 | `@gambrel/components` | Components; depends on `@gambrel/view`, `@gambrel/reactivity`, and `@gambrel/icons` |
-| `@gambrel/router`     | Matching, resolution, hydration payload                    |
-| `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                            |
-| `@gambrel/ssr`        | Document request handler                                   |
-| `@gambrel/compiler`   | Route discovery, manifests, builds                         |
+| `@gambrel/router`     | Matching, resolution, hydration payload                                             |
+| `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                                                     |
+| `@gambrel/ssr`        | Document request handler                                                            |
+| `@gambrel/compiler`   | Route discovery, manifests, builds                                                  |
 
 See [Architecture](./docs/architecture.md) for the dependency direction.
 
