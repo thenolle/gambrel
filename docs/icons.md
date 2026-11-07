@@ -134,3 +134,41 @@ export const Logo = createIcon('logo', [['circle', { cx: '12', cy: '12', r: '8' 
 ## Keeping it consistent
 
 The generated modules are committed. A test fails if the `svg/` folder and the generated code ever differ, so run `generate` after changing a file.
+
+## Browse the icon catalog
+
+Open `icons.html` on the documentation site, or use the Icons link in its header.
+
+The catalog supports:
+
+- Search by name, component name and keywords
+- Category filtering
+- Live size, stroke-width and color controls
+- Copy import, JSX and standalone SVG
+
+The catalog is a static page. It works on GitHub Pages without a server process.
+
+## Maintain catalog metadata
+
+`packages/icons/catalog.config.json` is the maintained metadata source.
+
+Ordered prefix rules classify names. Unmatched names use the explicit `general` category. Add an override for a specific icon when it needs another category or useful search synonyms.
+
+```json
+{
+  "search": {
+    "category": "navigation",
+    "keywords": ["find", "lookup", "magnifier"]
+  }
+}
+```
+
+Overrides must refer to existing SVG files and declared categories. Catalog generation fails on invalid metadata.
+
+The website generates `icons.json` from validated SVG sources. Applications importing individual icons do not load this catalog.
+
+## Validation boundaries
+
+The authoring validator rejects duplicate attributes, unexpected root attributes, unsupported shapes, malformed attributes and negative dimensions.
+
+This is structural validation, not a full SVG path grammar checker. Use the preview or catalog to inspect drawings visually before publishing.

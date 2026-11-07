@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Icon catalog · Gambrel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="icons.css">
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" href="./">Gambrel docs</a>
+      <span class="badge">Icon catalog</span>
+      <div class="spacer"></div>
+      <a class="btn btn-outline btn-sm" href="./#/icons">Icon reference</a>
+    </div>
+  </header>
+
+  <main class="catalog">
+    <h1>Find the right icon</h1>
+    <p class="muted">Search the library, adjust the drawing, and copy a ready-to-use snippet.</p>
+
+    <form id="catalog-controls" class="catalog-controls">
+      <label>
+        Search
+        <input id="icon-search" type="search" placeholder="Search names and keywords">
+      </label>
+      <label>
+        Category
+        <select id="icon-category">
+          <option value="">All categories</option>
+        </select>
+      </label>
+      <label>
+        Size <output id="icon-size-output">24</output>
+        <input id="icon-size" type="range" min="12" max="64" value="24">
+      </label>
+      <label>
+        Stroke <output id="icon-stroke-output">2</output>
+        <input id="icon-stroke" type="range" min="0.5" max="3" step="0.25" value="2">
+      </label>
+      <label>
+        Color
+        <input id="icon-color" type="color" value="#71717a">
+      </label>
+    </form>
+
+    <p id="catalog-status" role="status" aria-live="polite">Loading icons…</p>
+
+    <div class="catalog-layout">
+      <section id="icon-grid" class="icon-grid" aria-label="Icons"></section>
+      <aside class="icon-detail" aria-label="Selected icon">
+        <div id="icon-preview" class="icon-preview"></div>
+        <h2 id="icon-name">Select an icon</h2>
+        <p id="icon-keywords" class="muted"></p>
+
+        <div class="icon-copy-actions">
+          <button id="copy-import" type="button" class="btn btn-outline" disabled>Copy import</button>
+          <button id="copy-jsx" type="button" class="btn btn-outline" disabled>Copy JSX</button>
+          <button id="copy-svg" type="button" class="btn btn-outline" disabled>Copy SVG</button>
+        </div>
+
+        <pre id="icon-snippet" tabindex="0"></pre>
+        <p id="copy-status" role="status" aria-live="polite"></p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="icon-catalog.js"></script>
+</body>
+
+</html>

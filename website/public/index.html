@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,29 +12,40 @@
       var choice = localStorage.getItem('gambrel-docs-theme')
       var dark = choice === 'dark' || ((choice === null || choice === 'system') && matchMedia('(prefers-color-scheme: dark)').matches)
       document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-    } catch (error) {}
+    } catch (error) { }
   </script>
 </head>
+
 <body data-view="doc">
   <a class="skip" href="#content">Skip to content</a>
   <div id="progress" aria-hidden="true"></div>
   <header class="header">
     <div class="header-inner">
-      <button id="menu" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle navigation" aria-controls="sidebar"></button>
+      <button id="menu" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle navigation"
+        aria-controls="sidebar"></button>
       <a class="logo" href="#/"><span class="logo-mark">G</span><span class="logo-text">Gambrel</span></a>
       <nav id="quick" class="quick" aria-label="Sections"></nav>
       <div class="spacer"></div>
       <button id="open-search" class="search-button" type="button" aria-label="Search documentation"></button>
-      <a id="repo" class="btn btn-ghost btn-sm" href="https://github.com/thenolle/gambrel" target="_blank" rel="noopener noreferrer"></a>
+      <a class="btn btn-ghost btn-sm" href="icons.html">Icons</a>
+      <a id="repo" class="btn btn-ghost btn-sm" href="https://github.com/thenolle/gambrel" target="_blank"
+        rel="noopener noreferrer"></a>
       <div class="menu-wrap">
-        <button id="theme" class="btn btn-ghost btn-icon" type="button" aria-label="Change theme" aria-haspopup="menu" aria-expanded="false"></button>
+        <button id="theme" class="btn btn-ghost btn-icon" type="button" aria-label="Change theme" aria-haspopup="menu"
+          aria-expanded="false"></button>
         <div id="theme-menu" class="popover" role="menu" hidden></div>
       </div>
     </div>
   </header>
   <div class="shell">
-    <aside class="sidebar-wrap"><nav id="sidebar" aria-label="Documentation"></nav></aside>
-    <main id="content" tabindex="-1"><div class="doc"><p class="muted">Loading documentation...</p></div></main>
+    <aside class="sidebar-wrap">
+      <nav id="sidebar" aria-label="Documentation"></nav>
+    </aside>
+    <main id="content" tabindex="-1">
+      <div class="doc">
+        <p class="muted">Loading documentation...</p>
+      </div>
+    </main>
     <aside id="toc" aria-label="On this page"></aside>
   </div>
   <div id="overlay" hidden></div>
@@ -42,4 +54,5 @@
   <dialog id="shortcuts" aria-label="Keyboard shortcuts"></dialog>
   <script type="module" src="app.js"></script>
 </body>
+
 </html>

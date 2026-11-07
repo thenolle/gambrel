@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { serve, staticFiles } from '@gambrel/bun'
 import { createApp, type App } from '@gambrel/core'
 import { bundleApp, siteRoot } from './bundle.ts'
+import { writeIconCatalog } from './catalog.ts'
 
 export const docsRoot = join(siteRoot, '..', 'docs')
 const publicDir = join(siteRoot, 'public')
@@ -28,6 +29,7 @@ function isAddressInUse(error: unknown): boolean {
 
 if (import.meta.main) {
   await bundleApp(false)
+  await writeIconCatalog()
   const port = Number(process.env['DOCS_PORT'] ?? 4000)
   try {
     const server = serve(createSiteApp(), { port, development: true })

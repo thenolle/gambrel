@@ -2,10 +2,12 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { bundleApp, siteRoot } from './bundle.ts'
 import { docsRoot } from './serve.ts'
+import { writeIconCatalog } from './catalog.ts'
 
 const dist = join(siteRoot, 'dist')
 
 await bundleApp(true)
+await writeIconCatalog()
 await rm(dist, { recursive: true, force: true })
 await mkdir(dist, { recursive: true })
 await cp(join(siteRoot, 'public'), dist, { recursive: true })
