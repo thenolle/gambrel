@@ -287,7 +287,7 @@ async function publish(packages: readonly WorkspacePackage[]): Promise<void> {
     console.log('Nothing was published. Run again and answer "yes", or use --yes.')
     return
   }
-  const client = option('--client') ?? 'bun'
+  const client = option('--client') ?? (Bun.which('npm') === null ? 'bun' : 'npm')
   const tag = option('--tag')
   const otp = option('--otp')
   console.log('Publishing:')

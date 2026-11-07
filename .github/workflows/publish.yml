@@ -24,12 +24,11 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+      - name: Use a recent npm
+        run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
       - name: Release
         run: >-
           bun run release publish --client npm
           ${{ (github.event_name == 'push' || inputs.dry-run == false) && '--yes' || '' }}
           ${{ github.event_name == 'push' && format('--expect-version {0}', github.ref_name) || '' }}
-          ${{ vars.NPM_PROVENANCE == 'true' && '--provenance' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

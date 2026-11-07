@@ -19,13 +19,13 @@ bun run release publish
 
 This checks the manifests, runs the type check and the tests, builds every package, verifies the built packages against each other, lists the contents of each tarball, and then asks you to type `yes`. Nothing is published until you do. Useful options:
 
-| Option         | Meaning                                 |
-| -------------- | --------------------------------------- |
-| `--yes`        | Publish without the question            |
-| `--tag next`   | Publish under a tag other than `latest` |
-| `--otp 123456` | A two-factor code                       |
-| `--skip-tests` | Skip the typecheck and test run         |
-| `--client npm` | Publish with npm instead of Bun         |
+| Option         | Meaning                                                                |
+| -------------- | ---------------------------------------------------------------------- |
+| `--yes`        | Publish without the question                                           |
+| `--tag next`   | Publish under a tag other than `latest`                                |
+| `--otp 123456` | A six-digit code from an authenticator app. Not needed with a passkey. |
+| `--skip-tests` | Skip the typecheck and test run                                        |
+| `--client npm` | Publish with npm instead of Bun                                        |
 
 Versions already on the registry are skipped, so an interrupted release can be resumed by running the command again.
 
