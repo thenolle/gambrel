@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.2
+
+### Documentation
+
+- Added package-specific public READMEs to published packages.
+- Updated installation, architecture, application structure and build documentation.
+- Documented SSR, CSR and server-only rendering examples.
+- Clarified package entry points, stylesheet integration and compatibility.
+
+### Release tooling
+
+- Package README validation accepts Windows and Unix line endings and UTF-8 BOMs.
+- Published README files are copied from their package sources.
+
 ## 0.2.0
 
 ### Added
