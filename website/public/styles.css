@@ -411,3 +411,78 @@ html:not([data-enhanced]) #theme {
     scroll-behavior: auto;
   }
 }
+
+.pwa-dock {
+  position: fixed;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 70;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  max-width: calc(100vw - 2rem);
+  padding: .5rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) + 4px);
+  background: hsl(var(--background) / .96);
+  box-shadow: 0 8px 28px rgb(0 0 0 / .14);
+  backdrop-filter: blur(12px);
+}
+
+.pwa-status {
+  color: hsl(var(--muted-foreground));
+  font-size: .75rem;
+}
+
+.pwa-status:empty {
+  display: none;
+}
+
+.pwa-dock.is-offline {
+  border-color: hsl(var(--warning));
+}
+
+.pwa-help {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+}
+
+@media (display-mode: standalone) {
+  .header-inner {
+    padding-top: env(safe-area-inset-top);
+    height: calc(var(--header) + env(safe-area-inset-top));
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 560px) {
+  .pwa-dock {
+    left: .75rem;
+    right: .75rem;
+    bottom: max(.75rem, env(safe-area-inset-bottom));
+  }
+
+  .pwa-dock .btn {
+    min-height: 2.75rem;
+  }
+
+  .page-foot,
+  .landing {
+    padding-bottom: 5rem;
+  }
+
+  #to-top {
+    bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media print {
+  .pwa-dock,
+  .pwa-help {
+    display: none !important;
+  }
+}

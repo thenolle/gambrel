@@ -6,6 +6,7 @@ import { renderMarkdown } from '../src/markdown.ts'
 import { flatten, parseNav } from '../src/nav.ts'
 import { DEFAULT_SITE_URL, descriptionFromHtml, normalizeSiteUrl, pageFile, pageUrl, rootRelativeBase, seoHead, staticLinks, type PageSeo } from '../src/seo.ts'
 import { socialImage } from './social-image.ts'
+import { createHash } from 'node:crypto'
 
 function replaceMain(shell: string, content: string): string {
   const pattern = /(<main\b(?=[^>]*\bid="content")[^>]*>)[\s\S]*?<\/main>/i
@@ -37,12 +38,14 @@ export async function prerender(dist: string, docs: string, siteValue: string): 
     const imageName = path === '' ? 'home' : path.replace(/[^a-z0-9-]/g, '-')
     const image = `social/${imageName}.png`
     await mkdir(join(dist, 'social'), { recursive: true })
-    await writeFile(join(dist, image), socialImage(title))
+    const card = socialImage(title, description, path === 'icons.html' ? 'Icon library' : 'Documentation')
+    await writeFile(join(dist, image), card)
+    const imageVersion = createHash('sha256').update(card).digest('hex').slice(0, 16)
     const metadata: PageSeo = {
       path,
       title: `${title} · Gambrel`,
       description,
-      image,
+      image: `${image}?v=${imageVersion}`,
       noindex
     }
     let html = path === 'icons.html' ? sourceShell : replaceMain(replaceNav(sourceShell, sidebar), content)

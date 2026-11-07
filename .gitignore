@@ -12,3 +12,5 @@ packages/icons/preview.html
 website/public/icon-catalog.js
 website/public/icons.json
 examples/modes/.data/
+website/public/pwa-client.js
+website/.artwork-preview/

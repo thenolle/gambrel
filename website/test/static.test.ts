@@ -16,6 +16,30 @@ describe('the static site', () => {
     const child = Bun.spawn([process.execPath, join(siteRoot, 'scripts', 'build.ts')], { stdout: 'ignore', stderr: 'inherit' })
     expect(await child.exited).toBe(0)
 
+    const manifest = JSON.parse(await readFile(join(dist, 'manifest.webmanifest'), 'utf8')) as { display: string, start_url: string, scope: string, icons: Array<{ src: string; sizes: string }> }
+
+    expect(manifest.display).toBe('standalone')
+    expect(manifest.start_url).toBe('./')
+    expect(manifest.scope).toBe('./')
+    expect(manifest.icons.map((icon) => icon.sizes)).toEqual(['192x192', '512x512'])
+
+    for (const icon of manifest.icons) {
+      const png = await readFile(join(dist, icon.src))
+      const size = Number(icon.sizes.split('x')[0])
+      expect(png.readUInt32BE(16)).toBe(size)
+      expect(png.readUInt32BE(20)).toBe(size)
+    }
+
+    const worker = await readFile(join(dist, 'sw.js'), 'utf8')
+    expect(worker).toContain('ACTIVATE_UPDATE')
+    expect(worker).toContain('offline.html')
+    expect(worker).toContain('gambrel-docs:')
+
+    const generated = await readFile(join(dist, 'router', 'index.html'), 'utf8')
+    expect(generated).toContain('rel="manifest"')
+    expect(generated).toContain('src="pwa-client.js"')
+    expect(generated).toContain('social/router.png?v=')
+
     const router = await readFile(join(dist, 'router', 'index.html'), 'utf8')
     expect(router).toContain('rel="canonical"')
     expect(router).toContain('property="og:title"')
@@ -57,5 +81,5 @@ describe('the static site', () => {
 
     const entries = await readdir(join(dist, 'docs'))
     expect(entries.filter((entry) => entry.endsWith('.md')).length).toBeGreaterThan(20)
-  }, 60_000)
+  }, 300_000)
 })

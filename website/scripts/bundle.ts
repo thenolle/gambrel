@@ -6,7 +6,8 @@ export async function bundleApp(minify: boolean): Promise<void> {
   const result = await Bun.build({
     entrypoints: [
       join(siteRoot, 'src', 'app.ts'),
-      join(siteRoot, 'src', 'icon-catalog.ts')
+      join(siteRoot, 'src', 'icon-catalog.ts'),
+      join(siteRoot, 'src', 'pwa-client.ts')
     ],
     outdir: join(siteRoot, 'public'),
     target: 'browser',

@@ -1,136 +1,93 @@
-import { deflateSync } from 'node:zlib'
+import { createHash } from 'node:crypto'
+import { Raster, type Color } from './raster.ts'
+import { drawText, measureText, wrapText } from './vector-type.ts'
 
-const FONT: Readonly<Record<string, string>> = {
-  A: '01110/10001/10001/11111/10001/10001/10001',
-  B: '11110/10001/10001/11110/10001/10001/11110',
-  C: '01111/10000/10000/10000/10000/10000/01111',
-  D: '11110/10001/10001/10001/10001/10001/11110',
-  E: '11111/10000/10000/11110/10000/10000/11111',
-  F: '11111/10000/10000/11110/10000/10000/10000',
-  G: '01111/10000/10000/10111/10001/10001/01111',
-  H: '10001/10001/10001/11111/10001/10001/10001',
-  I: '11111/00100/00100/00100/00100/00100/11111',
-  J: '00111/00010/00010/00010/10010/10010/01100',
-  K: '10001/10010/10100/11000/10100/10010/10001',
-  L: '10000/10000/10000/10000/10000/10000/11111',
-  M: '10001/11011/10101/10101/10001/10001/10001',
-  N: '10001/11001/10101/10011/10001/10001/10001',
-  O: '01110/10001/10001/10001/10001/10001/01110',
-  P: '11110/10001/10001/11110/10000/10000/10000',
-  Q: '01110/10001/10001/10001/10101/10010/01101',
-  R: '11110/10001/10001/11110/10100/10010/10001',
-  S: '01111/10000/10000/01110/00001/00001/11110',
-  T: '11111/00100/00100/00100/00100/00100/00100',
-  U: '10001/10001/10001/10001/10001/10001/01110',
-  V: '10001/10001/10001/10001/10001/01010/00100',
-  W: '10001/10001/10001/10101/10101/10101/01010',
-  X: '10001/10001/01010/00100/01010/10001/10001',
-  Y: '10001/10001/01010/00100/00100/00100/00100',
-  Z: '11111/00001/00010/00100/01000/10000/11111',
-  '0': '01110/10001/10011/10101/11001/10001/01110',
-  '1': '00100/01100/00100/00100/00100/00100/01110',
-  '2': '01110/10001/00001/00010/00100/01000/11111',
-  '3': '11110/00001/00001/01110/00001/00001/11110',
-  '4': '00010/00110/01010/10010/11111/00010/00010',
-  '5': '11111/10000/10000/11110/00001/00001/11110',
-  '6': '01110/10000/10000/11110/10001/10001/01110',
-  '7': '11111/00001/00010/00100/01000/01000/01000',
-  '8': '01110/10001/10001/01110/10001/10001/01110',
-  '9': '01110/10001/10001/01111/00001/00001/01110'
+const WHITE: Color = [244, 244, 250]
+const MUTED: Color = [160, 159, 180]
+const VIOLET: Color = [177, 157, 255]
+
+export function drawBrand(canvas: Raster, x: number, y: number, size: number, color: Color, opacity = 1): void {
+  const s = size / 24
+  const paths: readonly (readonly (readonly [number, number])[])[] = [
+    [[2.5, 14.5], [6, 7.8], [12, 3.5], [18, 7.8], [21.5, 14.5]],
+    [[5.5, 12.5], [5.5, 21], [18.5, 21], [18.5, 12.5]],
+    [[10, 21], [10, 15.5], [14, 15.5], [14, 21]]
+  ]
+  for (const path of paths) canvas.polyline(path.map(([px, py]) => [x + px * s, y + py * s] as const), size * .065, color, opacity)
+  for (const px of [8, 16]) canvas.line(x + px * s, y + 15 * s, x + px * s, y + 15 * s, size * .065, color, opacity)
 }
 
-function crc32(data: Uint8Array): number {
-  let crc = 0xffffffff
-  for (const byte of data) {
-    crc ^= byte
-    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ ((crc & 1) === 1 ? 0xedb88320 : 0)
-  }
-  return (crc ^ 0xffffffff) >>> 0
+function accentFor(title: string): Color {
+  const digest = createHash('sha256').update(title).digest()
+  const palettes: readonly Color[] = [
+    [139, 120, 246],
+    [82, 154, 232],
+    [61, 170, 160],
+    [180, 113, 217]
+  ]
+  return palettes[(digest[0] ?? 0) % palettes.length] ?? VIOLET
 }
 
-function chunk(type: string, data: Buffer): Buffer {
-  const name = Buffer.from(type)
-  const length = Buffer.alloc(4)
-  length.writeUInt32BE(data.length)
-  const crc = Buffer.alloc(4)
-  crc.writeUInt32BE(crc32(Buffer.concat([name, data])))
-  return Buffer.concat([length, name, data, crc])
-}
-
-export function socialImage(title: string): Buffer {
-  const width = 1200
-  const height = 630
-  const pixels = Buffer.alloc(width * height * 3)
-  const rect = (x: number, y: number, w: number, h: number, color: readonly number[]): void => {
-    for (let py = Math.max(0, y); py < Math.min(height, y + h); py += 1) {
-      for (let px = Math.max(0, x); px < Math.min(width, x + w); px += 1) {
-        const offset = (py * width + px) * 3
-        pixels[offset] = color[0] ?? 0
-        pixels[offset + 1] = color[1] ?? 0
-        pixels[offset + 2] = color[2] ?? 0
-      }
-    }
-  }
-  const text = (value: string, x: number, y: number, scale: number, color: readonly number[]): void => {
-    Array.from(value).forEach((character, index) => {
-      const glyph = FONT[character]
-      if (glyph === undefined) return
-      glyph.split('/').forEach((row, rowIndex) => {
-        Array.from(row).forEach((cell, column) => {
-          if (cell === '1') rect(x + index * 6 * scale + column * scale, y + rowIndex * scale, scale, scale, color)
-        })
-      })
-    })
-  }
-  const line = (x1: number, y1: number, x2: number, y2: number): void => {
-    const steps = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1))
-    for (let index = 0; index <= steps; index += 1) {
-      const ratio = steps === 0 ? 0 : index / steps
-      rect(Math.round(x1 + (x2 - x1) * ratio) - 4, Math.round(y1 + (y2 - y1) * ratio) - 4, 8, 8, [250, 250, 250])
-    }
-  }
-  rect(0, 0, width, height, [12, 12, 16])
-  rect(0, 0, 12, height, [139, 120, 255])
-  rect(48, 48, 1104, 534, [24, 24, 30])
-  line(82, 170, 110, 112)
-  line(110, 112, 154, 80)
-  line(154, 80, 198, 112)
-  line(198, 112, 226, 170)
-  line(108, 158, 108, 220)
-  line(108, 220, 204, 220)
-  line(204, 220, 204, 158)
-  line(204, 158, 154, 158)
-  text('GAMBREL', 270, 108, 10, [250, 250, 250])
-  text('DOCUMENTATION', 274, 198, 3, [172, 172, 190])
-  const normalized = title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim()
-  const lines: string[] = []
-  let current = ''
-  for (const word of normalized.split(' ')) {
-    const next = current === '' ? word : `${current} ${word}`
-    if (next.length > 28 && current !== '') {
-      lines.push(current)
-      current = word
-    } else current = next
-  }
-  if (current !== '') lines.push(current)
-  lines.slice(0, 3).forEach((value, index) => {
-    text(value.slice(0, 28), 88, 325 + index * 65, 6, [230, 230, 240])
+/**
+ * Deterministic PNG sharing artwork, rendered entirely in TypeScript.
+ */
+export function socialImage(title: string, description = 'TypeScript. JSX. Explicit server and browser boundaries.', section = 'Documentation'): Buffer {
+  const canvas = new Raster(1200, 630)
+  const accent = accentFor(title)
+  canvas.background((x, y): Color => {
+    const purple = Math.exp(-(((x - 1120) / 620) ** 2 + ((y - 60) / 420) ** 2))
+    const teal = Math.exp(-(((x - 80) / 600) ** 2 + ((y - 650) / 360) ** 2))
+    return [
+      10 + accent[0] * purple * .14 + teal * 3,
+      11 + accent[1] * purple * .12 + teal * 18,
+      17 + accent[2] * purple * .16 + teal * 22
+    ]
   })
-  const stride = width * 3
-  const scanlines = Buffer.alloc((stride + 1) * height)
-  for (let row = 0; row < height; row += 1) {
-    scanlines[row * (stride + 1)] = 0
-    pixels.copy(scanlines, row * (stride + 1) + 1, row * stride, (row + 1) * stride)
+  for (let x = 0; x < 1200; x += 48) canvas.line(x, 0, x, 630, .7, [118, 118, 145], .09)
+  for (let y = 0; y < 630; y += 48) canvas.line(0, y, 1200, y, .7, [118, 118, 145], .09)
+  canvas.roundRect(24, 24, 1152, 582, 28, [91, 91, 119], .28)
+  canvas.roundRect(25, 25, 1150, 580, 27, [12, 13, 20], .87)
+  canvas.roundRect(25, 25, 7, 580, 3, accent, .9)
+  canvas.roundRect(64, 60, 64, 64, 17, accent, .16)
+  drawBrand(canvas, 72, 68, 48, WHITE)
+  drawText(canvas, 'GAMBREL', 150, 77, 28, WHITE, .095)
+  drawText(canvas, 'DOCUMENTATION', 151, 113, 10, MUTED, .085)
+  const sectionText = wrapText(section, 12, 280, 1)[0] ?? 'DOCUMENTATION'
+  const sectionWidth = Math.max(100, measureText(sectionText, 12) + 34)
+  canvas.roundRect(1132 - sectionWidth, 73, sectionWidth, 35, 17, accent, .12)
+  drawText(canvas, sectionText, 1149 - sectionWidth, 85, 12, VIOLET, .09)
+  drawBrand(canvas, 945, 250, 225, accent, .09)
+  drawText(canvas, 'BUILD WITH CLARITY', 70, 178, 12, VIOLET, .09)
+  let titleSize = 60
+  let titleLines = wrapText(title, titleSize, 1030, 3)
+  if (titleLines.length === 3) {
+    titleSize = 52
+    titleLines = wrapText(title, titleSize, 1030, 3)
   }
-  const header = Buffer.alloc(13)
-  header.writeUInt32BE(width, 0)
-  header.writeUInt32BE(height, 4)
-  header[8] = 8
-  header[9] = 2
-  return Buffer.concat([
-    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
-    chunk('IHDR', header),
-    chunk('IDAT', deflateSync(scanlines)),
-    chunk('IEND', Buffer.alloc(0))
-  ])
+  titleLines.forEach((line, index) => {
+    drawText(canvas, line, 72, 226 + index * (titleSize + 20), titleSize, WHITE, .105)
+  })
+  const descriptionY = Math.max(422, 226 + titleLines.length * (titleSize + 20) + 6)
+  wrapText(description, 17, 1000, 2).forEach((line, index) => {
+    drawText(canvas, line, 72, descriptionY + index * 29, 17, MUTED, .075)
+  })
+  canvas.line(72, 550, 1128, 550, 1, [72, 72, 92], .7)
+  canvas.line(72, 581, 98, 581, 2, accent)
+  drawText(canvas, 'TYPESCRIPT / JSX / BUN', 113, 575, 11, MUTED, .08)
+  drawText(canvas, 'GAMBREL DOCS', 947, 575, 11, MUTED, .08)
+  return canvas.png()
+}
+
+/**
+ * Full-bleed application icon, with the mark inside a maskable safe area.
+ */
+export function appIcon(size: number): Buffer {
+  const canvas = new Raster(size, size)
+  canvas.background((x, y): Color => {
+    const glow = Math.max(0, 1 - Math.hypot(x - size * .8, y - size * .1) / size)
+    return [22 + glow * 12, 22 + glow * 8, 28 + glow * 25]
+  })
+  const markSize = size * .58
+  drawBrand(canvas, (size - markSize) / 2, (size - markSize) / 2, markSize, WHITE)
+  return canvas.png()
 }
