@@ -1,6 +1,7 @@
 {
   "name": "@gambrel/website",
   "version": "0.1.0",
+  "license": "PolyForm-Strict-1.0.0",
   "private": true,
   "description": "Client-only documentation site that renders the Markdown files in docs/.",
   "type": "module",

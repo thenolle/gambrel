@@ -75,6 +75,8 @@ async function buildPackage(pkg: WorkspacePackage, version: string, builtBefore:
   await mkdir(join(stage, 'dist'), { recursive: true })
   const { entries, assets } = sourceEntries(pkg.manifest)
   const publishNames = new Set((await loadPackages()).map((item) => item.manifest.name))
+  const previousEnv = process.env['NODE_ENV']
+  process.env['NODE_ENV'] = 'production'
   let output: Bun.BuildOutput
   try {
     output = await Bun.build({
@@ -85,10 +87,14 @@ async function buildPackage(pkg: WorkspacePackage, version: string, builtBefore:
       packages: 'external',
       splitting: entries.length > 1,
       naming: { entry: '[name].[ext]', chunk: 'chunks/[name]-[hash].[ext]' },
+      define: { 'process.env.NODE_ENV': '"production"' },
       minify: false
     })
   } catch (error) {
     throw new Error(`${pkg.manifest.name}: bundling failed: ${error instanceof AggregateError ? error.errors.map(String).join('; ') : String(error)}`)
+  } finally {
+    if (previousEnv === undefined) delete process.env['NODE_ENV']
+    else process.env['NODE_ENV'] = previousEnv
   }
   if (!output.success) throw new Error(`${pkg.manifest.name}: bundling failed: ${output.logs.map((log) => log.message).join('; ')}`)
   const config = join(stageRoot, `${pkg.dir}.tsconfig.json`)
@@ -139,9 +145,8 @@ async function verifyPackage(pkg: WorkspacePackage): Promise<string[]> {
   for (const file of await walk(join(stage, 'dist'))) {
     if (!/\.(?:js|d\.ts)$/.test(file)) continue
     const text = await readFile(file, 'utf8')
-    if (/(?:\bfrom|\bimport\s*\(?)\s*['"]\.{1,2}\/[^'"]*\.tsx?['"]/.test(text)) {
-      problems.push(`${manifest.name}: ${file.slice(stage.length + 1)} still imports a TypeScript source file`)
-    }
+    if (/(?:\bfrom|\bimport\s*\(?)\s*['"]\.{1,2}\/[^'"]*\.tsx?['"]/.test(text)) problems.push(`${manifest.name}: ${file.slice(stage.length + 1)} still imports a TypeScript source file`)
+    if (file.endsWith('.js') && /from\s*["'][^"']*jsx-dev-runtime["']/.test(text)) problems.push(`${manifest.name}: ${file.slice(stage.length + 1)} uses the development JSX runtime`)
   }
   const { entries } = sourceEntries(pkg.manifest)
   for (const entry of entries) {
@@ -198,6 +203,11 @@ async function build(packages: readonly WorkspacePackage[]): Promise<void> {
 }
 
 async function verify(packages: readonly WorkspacePackage[]): Promise<void> {
+  try {
+    await stat(stageRoot)
+  } catch {
+    throw new Error("Nothing to verify: run 'bun run release build' first.")
+  }
   console.log('Verifying:')
   const problems: string[] = []
   for (const pkg of packages) problems.push(...(await verifyPackage(pkg)))

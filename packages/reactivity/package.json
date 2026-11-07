@@ -1,6 +1,7 @@
 {
   "name": "@gambrel/reactivity",
   "version": "0.1.0",
+  "license": "PolyForm-Strict-1.0.0",
   "description": "Signals, effects, cleanup",
   "private": true,
   "type": "module",

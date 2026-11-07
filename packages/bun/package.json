@@ -1,6 +1,7 @@
 {
   "name": "@gambrel/bun",
   "version": "0.1.0",
+  "license": "PolyForm-Strict-1.0.0",
   "description": "`Bun.serve` adapter",
   "private": true,
   "type": "module",
