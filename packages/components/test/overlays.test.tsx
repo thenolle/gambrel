@@ -25,17 +25,33 @@ import { createDom } from './dom.ts'
 describe('static markup', () => {
   test('Dialog renders a closed dialog with linked title and description', async () => {
     const html = await renderToString(
-      <Dialog id="d" trigger={<Button>Open</Button>} title="Edit" description="Make changes" footer="foot">
+      <Dialog
+        id="d"
+        trigger={<Button>Open</Button>}
+        title="Edit"
+        description="Make changes"
+        footer="foot"
+      >
         Body
       </Dialog>
     )
-    expect(html).toContain('<span class="gb-trigger"><button type="button" class="gb-button gb-button-default gb-button-md">Open</button></span>')
-    expect(html).toContain('<dialog id="d" aria-labelledby="d-title" aria-describedby="d-description" class="gb-dialog gb-dialog-center">')
-    expect(html).toContain('<h2 id="d-title" class="gb-dialog-title">Edit</h2>')
-    expect(html).toContain('<p id="d-description" class="gb-dialog-description">Make changes</p>')
-    expect(html).toContain('<div class="gb-dialog-footer">foot</div>')
-    expect(html).toContain('aria-label="Close"')
-    expect(html).not.toContain(' open')
+
+    const dom = createDom(html)
+    const trigger = dom.query('span.gb-trigger')
+    const button = trigger.querySelector('button')
+    const dialog = dom.query<HTMLDialogElement>('dialog')
+
+    expect(button?.textContent).toBe('Open')
+    expect(dialog.open).toBe(false)
+    expect(dialog.id).toBe('d')
+    expect(dialog.getAttribute('aria-labelledby')).toBe('d-title')
+    expect(dialog.getAttribute('aria-describedby')).toBe('d-description')
+    expect(dom.query('#d-title').textContent).toBe('Edit')
+    expect(dom.query('#d-description').textContent).toBe('Make changes')
+    expect(dom.query('.gb-dialog-footer').textContent).toBe('foot')
+    expect(dom.query('[aria-label="Close"]')).not.toBeNull()
+    expect(dialog.classList.contains('gb-dialog')).toBe(true)
+    expect(dialog.classList.contains('gb-dialog-center')).toBe(true)
   })
 
   test('AlertDialog has the alertdialog role, no close button and decision buttons', async () => {
