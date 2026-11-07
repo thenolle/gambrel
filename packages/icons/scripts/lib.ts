@@ -49,18 +49,25 @@ export function toPascalCase(name: string): string {
   return name.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('')
 }
 
-function parseAttributes(icon: string, tag: string, source: string): Record<string, string> {
-  const attributes: Record<string, string> = {}
+function readAttributes(icon: string, tag: string, source: string): Record<string, string> {
+  const attributes: Record<string, string> = Object.create(null) as Record<string, string>
   const rest = source.replace(/([a-zA-Z][\w-]*)="([^"]*)"/g, (_match, key: string, value: string) => {
+    if (Object.hasOwn(attributes, key)) throw new IconError(icon, `<${tag}> has duplicate attribute '${key}'`)
     attributes[key] = value
     return ''
   })
   if (rest.trim() !== '') throw new IconError(icon, `<${tag}> has malformed attributes: ${rest.trim().slice(0, 40)}`)
+  return attributes
+}
+
+function parseAttributes(icon: string, tag: string, source: string): Record<string, string> {
+  const attributes = readAttributes(icon, tag, source)
   const allowed = ALLOWED[tag] ?? []
   for (const [key, value] of Object.entries(attributes)) {
     if (!allowed.includes(key)) throw new IconError(icon, `<${tag}> may not have the attribute '${key}' (allowed: ${allowed.join(', ')})`)
-    const valid = key === 'd' ? PATH_DATA.test(value) : key === 'points' ? POINTS.test(value) : NUMBER.test(value)
+    const valid = key === 'd' ? PATH_DATA.test(value) : key === 'points' ? POINTS.test(value) : NUMBER.test(value) && Number.isFinite(Number(value))
     if (!valid) throw new IconError(icon, `<${tag}> has an invalid ${key}="${value.slice(0, 30)}"`)
+    if (['r', 'rx', 'ry', 'width', 'height'].includes(key) && Number(value) < 0) throw new IconError(icon, `<${tag}> ${key} must not be negative`)
   }
   for (const key of REQUIRED[tag] ?? []) {
     if (attributes[key] === undefined) throw new IconError(icon, `<${tag}> is missing '${key}'`)
@@ -75,7 +82,12 @@ function parseAttributes(icon: string, tag: string, source: string): Record<stri
 export function parseSvg(icon: string, source: string): IconNode {
   const root = /^\s*<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/.exec(source)
   if (root === null) throw new IconError(icon, 'expected a single <svg>...</svg> element')
-  const viewBox = /viewBox="([^"]*)"/.exec(root[1] ?? '')?.[1]
+  const rootAttributes = readAttributes(icon, 'svg', root[1] ?? '')
+  for (const key of Object.keys(rootAttributes)) {
+    if (key !== 'viewBox' && key !== 'xmlns') throw new IconError(icon, `<svg> may not have the attribute '${key}'`)
+  }
+  if (rootAttributes['xmlns'] !== undefined && rootAttributes['xmlns'] !== 'http://www.w3.org/2000/svg') throw new IconError(icon, 'xmlns must be the SVG namespace')
+  const viewBox = rootAttributes['viewBox']
   if (viewBox !== '0 0 24 24') throw new IconError(icon, `viewBox must be "0 0 24 24", received ${JSON.stringify(viewBox)}`)
   const shapes: Array<readonly [string, Readonly<Record<string, string>>]> = []
   const leftover = (root[2] ?? '').replace(/<([a-z]+)(?:\s+([^<>]*?))?\s*\/>/g, (_match, tag: string, attributes: string | undefined) => {

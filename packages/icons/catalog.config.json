@@ -1,0 +1,72 @@
+{
+  "categories": [
+    {
+      "id": "development",
+      "label": "Files and development",
+      "prefixes": ["file", "folder", "git", "code", "terminal", "braces", "bug", "database", "package"],
+      "keywords": ["development", "source", "project"]
+    },
+    {
+      "id": "navigation",
+      "label": "Navigation and layout",
+      "prefixes": ["arrow", "chevron", "corner", "move", "panel", "layout", "grid", "columns", "house", "menu", "external-link", "maximize", "minimize"],
+      "keywords": ["navigation", "layout"]
+    },
+    {
+      "id": "editing",
+      "label": "Forms and editing",
+      "prefixes": ["align", "bold", "italic", "underline", "type", "clipboard", "list", "text", "eraser", "scissors", "paint", "palette", "undo", "redo", "spell", "pencil", "copy", "save", "filter", "sliders"],
+      "keywords": ["edit", "form", "input"]
+    },
+    {
+      "id": "communication",
+      "label": "Communication",
+      "prefixes": ["message", "mail", "phone", "megaphone", "inbox", "rss", "contact", "at-sign", "send", "share"],
+      "keywords": ["communication", "contact"]
+    },
+    {
+      "id": "media",
+      "label": "Media",
+      "prefixes": ["camera", "video", "music", "headphones", "film", "subtitles", "repeat", "shuffle", "rewind", "fast-forward", "image", "play", "pause", "skip", "volume", "mic"],
+      "keywords": ["media", "audio", "visual"]
+    },
+    {
+      "id": "commerce",
+      "label": "Commerce",
+      "prefixes": ["receipt", "wallet", "store", "shopping", "basket", "truck", "gift", "coins", "banknote", "percent", "barcode", "ticket", "building", "credit-card", "dollar", "tag"],
+      "keywords": ["commerce", "business"]
+    },
+    {
+      "id": "status",
+      "label": "Status and feedback",
+      "prefixes": ["circle", "badge", "timer", "hourglass", "flag", "thumbs", "bell", "check", "info", "triangle", "octagon", "loader", "shield", "lock", "key", "x"],
+      "keywords": ["status", "feedback"]
+    },
+    {
+      "id": "devices",
+      "label": "Devices and connectivity",
+      "prefixes": ["laptop", "tablet", "keyboard", "mouse", "printer", "router", "bluetooth", "plug", "unplug", "usb", "hard-drive", "battery", "monitor", "smartphone", "cpu", "server", "wifi"],
+      "keywords": ["device", "hardware"]
+    },
+    {
+      "id": "general",
+      "label": "General",
+      "prefixes": [],
+      "keywords": []
+    }
+  ],
+  "overrides": {
+    "search": {
+      "category": "navigation",
+      "keywords": ["find", "lookup", "magnifier"]
+    },
+    "trash": {
+      "category": "editing",
+      "keywords": ["delete", "remove", "bin"]
+    },
+    "settings": {
+      "category": "general",
+      "keywords": ["preferences", "configuration"]
+    }
+  }
+}
