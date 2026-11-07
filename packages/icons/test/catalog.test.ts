@@ -55,3 +55,37 @@ describe('strict SVG attributes', () => {
     )).toThrow('must not be negative')
   })
 })
+
+describe('brand icon source format', () => {
+  test('accepts the geometry-only Gambrel drawing', () => {
+    const node = parseSvg(
+      'gambrel',
+      [
+        '<svg viewBox="0 0 24 24">',
+        '  <path d="M2.5 14.5 6 7.8 12 3.5l6 4.3 3.5 6.7"/>',
+        '  <path d="M5.5 12.5V21h13v-8.5"/>',
+        '  <path d="M10 21v-5.5h4V21"/>',
+        '  <path d="M8 15h.01M16 15h.01"/>',
+        '</svg>'
+      ].join('\n')
+    )
+
+    expect(node.length).toBe(4)
+  })
+
+  test('rejects presentation attributes on library source roots', () => {
+    for (const attribute of [
+      'fill="none"',
+      'stroke="currentColor"',
+      'stroke-width="1.8"',
+      'role="img"'
+    ]) {
+      expect(() =>
+        parseSvg(
+          'gambrel',
+          `<svg viewBox="0 0 24 24" ${attribute}><path d="M0 0h24"/></svg>`
+        )
+      ).toThrow('may not have the attribute')
+    }
+  })
+})

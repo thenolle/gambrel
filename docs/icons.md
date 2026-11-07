@@ -172,3 +172,23 @@ The website generates `icons.json` from validated SVG sources. Applications impo
 The authoring validator rejects duplicate attributes, unexpected root attributes, unsupported shapes, malformed attributes and negative dimensions.
 
 This is structural validation, not a full SVG path grammar checker. Use the preview or catalog to inspect drawings visually before publishing.
+
+## Library sources versus standalone SVG files
+
+Files under `packages/icons/svg/` are geometry-only sources for the generator:
+
+```svg
+<svg viewBox="0 0 24 24">
+  <path d="M2 12h20"/>
+</svg>
+```
+
+Do not add `fill`, `stroke`, `stroke-width`, `role`, or accessible labels to these files. The generated component supplies presentation and accessibility attributes.
+
+Standalone SVG files, such as the website logo and favicon, are separate assets. They may contain their own presentation attributes and use a different viewBox.
+
+The Gambrel brand assets live at:
+
+- `packages/icons/svg/gambrel.svg`: outline component source
+- `website/public/gambrel.svg`: filled website logo
+- `website/public/favicon.svg`: browser-tab icon
