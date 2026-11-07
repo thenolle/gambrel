@@ -4,6 +4,7 @@ import { createInterface } from 'node:readline/promises'
 import { pathToFileURL } from 'node:url'
 import { checkManifest, importsTypeScriptSource, isSemver, rewriteDeclarationSpecifiers, rewriteManifest, sourceEntries, topologicalOrder, type PackageManifest, type WorkspacePackage } from './lib.ts'
 import { PUBLIC_PACKAGES, UNIVERSAL_PACKAGES } from './packages.ts'
+import { assertPackageReadme } from './readme.ts'
 
 const root = join(import.meta.dir, '..', '..', '..')
 const stageRoot = join(root, '.release')
@@ -133,7 +134,7 @@ async function buildPackage(pkg: WorkspacePackage, version: string, builtBefore:
   const manifest = rewriteManifest(pkg.manifest, { version, dir: pkg.dir, publishNames })
   await writeFile(join(stage, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
   const readme = await readFile(join(pkg.path, 'README.md'), 'utf8')
-  if (!readme.startsWith(`# ${pkg.manifest.name}\n`)) throw new Error(`${pkg.manifest.name}: README.md must start with '# ${pkg.manifest.name}'`)
+  assertPackageReadme(readme, pkg.manifest.name)
   await writeFile(join(stage, 'README.md'), readme, 'utf8')
   await cp(join(root, 'LICENSE'), join(stage, 'LICENSE'))
   console.log(`  built ${pkg.manifest.name}@${version}`)
