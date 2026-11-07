@@ -16,6 +16,24 @@ describe('the static site', () => {
     const child = Bun.spawn([process.execPath, join(siteRoot, 'scripts', 'build.ts')], { stdout: 'ignore', stderr: 'inherit' })
     expect(await child.exited).toBe(0)
 
+    const router = await readFile(join(dist, 'router', 'index.html'), 'utf8')
+    expect(router).toContain('rel="canonical"')
+    expect(router).toContain('property="og:title"')
+    expect(router).toContain('name="description"')
+    expect(router).toContain('<article class="doc">')
+    expect(router).toContain('<h1')
+    expect(router).not.toContain('Loading documentation...')
+
+    const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8')
+    expect(sitemap).toContain('/router/</loc>')
+    expect(sitemap).not.toContain('#/')
+    expect(sitemap).not.toContain('404.html')
+
+    const missing = await readFile(join(dist, '404.html'), 'utf8')
+    expect(missing).toContain('noindex, follow')
+
+    expect((await stat(join(dist, 'social', 'router.png'))).isFile()).toBe(true)
+
     for (const file of [
       'index.html',
       'styles.css',

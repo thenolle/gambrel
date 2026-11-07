@@ -8,19 +8,12 @@ import { createPalette } from './palette.ts'
 import { readingMinutes } from './reading.ts'
 import { sectionsOf, type Section } from './search.ts'
 import { applyTheme, readChoice, type ThemeChoice } from './theme.ts'
+import { installStaticNavigation, readDocLocation } from './static-navigation.ts'
 
-const SKELETON =
-  '<div class="doc"><div class="skeleton title"></div><div class="skeleton"></div><div class="skeleton short"></div><div class="skeleton"></div></div>'
+const SKELETON = '<div class="doc"><div class="skeleton title"></div><div class="skeleton"></div><div class="skeleton short"></div><div class="skeleton"></div></div>'
 
 function parseHash(): { path: string; anchor: string | undefined } {
-  let hash = location.hash.replace(/^#\/?/, '')
-  try {
-    hash = decodeURIComponent(hash)
-  } catch {
-    hash = ''
-  }
-  const [path = '', anchor] = hash.split('@')
-  return { path, anchor: anchor === '' ? undefined : anchor }
+  return readDocLocation()
 }
 
 async function copyWithFeedback(button: HTMLElement, text: string, idle: string, done: string): Promise<void> {
@@ -41,7 +34,6 @@ async function main(): Promise<void> {
   const pages = flatten(nav)
   const byPath = new Map(pages.map((page) => [page.path, page]))
   const mod = modifierKey()
-
   const content = byId('content')
   const sidebar = byId('sidebar')
   const toc = byId('toc')
@@ -53,49 +45,37 @@ async function main(): Promise<void> {
   const quick = byId('quick')
   const searchDialog = byId<HTMLDialogElement>('search')
   const shortcutsDialog = byId<HTMLDialogElement>('shortcuts')
-
   byId('menu').innerHTML = icons.menu
   toTop.innerHTML = icons.arrowUp
   byId('open-search').innerHTML = `${icons.search}<span>Search documentation...</span><kbd>${mod} K</kbd>`
   const repo = byId<HTMLAnchorElement>('repo')
   repo.href = nav.repo
   repo.innerHTML = `<span>GitHub</span>${icons.external}`
-
-  quick.innerHTML = nav.sections
-    .flatMap((section) => {
-      const first = section.pages[0]
-      if (first === undefined) return []
-      return [`<a href="#/${escapeHtml(first.path)}" data-section="${escapeHtml(section.title)}">${escapeHtml(section.title)}</a>`]
-    })
-    .join('')
-
-  sidebar.innerHTML = nav.sections
-    .map(
-      (section) =>
-        `<section class="nav-section"><h2>${escapeHtml(section.title)}</h2><ul>` +
-        section.pages
-          .map(
-            (page) =>
-              `<li><a href="#/${escapeHtml(page.path)}" data-path="${escapeHtml(page.path)}">${escapeHtml(page.title)}</a></li>`
-          )
-          .join('') +
-        '</ul></section>'
-    )
-    .join('')
-
+  quick.innerHTML = nav.sections.flatMap((section) => {
+    const first = section.pages[0]
+    if (first === undefined) return []
+    return [`<a href="#/${escapeHtml(first.path)}" data-section="${escapeHtml(section.title)}">${escapeHtml(section.title)}</a>`]
+  }).join('')
+  sidebar.innerHTML = nav.sections.map(
+    (section) =>
+      `<section class="nav-section"><h2>${escapeHtml(section.title)}</h2><ul>` +
+      section.pages.map((page) => `<li><a href="#/${escapeHtml(page.path)}" data-path="${escapeHtml(page.path)}">${escapeHtml(page.title)}</a></li>`).join('') +
+      '</ul></section>'
+  ).join('')
   const closeNav = (): void => {
     document.body.classList.remove('nav-open')
     overlay.hidden = true
+    byId('menu').setAttribute('aria-expanded', 'false')
   }
   byId('menu').addEventListener('click', () => {
     const open = document.body.classList.toggle('nav-open')
     overlay.hidden = !open
+    byId('menu').setAttribute('aria-expanded', String(open))
   })
   overlay.addEventListener('click', closeNav)
   sidebar.addEventListener('click', (event) => {
     if (event.target instanceof Element && event.target.closest('a') !== null) closeNav()
   })
-
   const renderThemeMenu = (): void => {
     const choice = readChoice()
     themeButton.innerHTML = document.documentElement.dataset['theme'] === 'dark' ? icons.moon : icons.sun
@@ -104,13 +84,10 @@ async function main(): Promise<void> {
       ['dark', icons.moon],
       ['system', icons.monitor]
     ]
-    themeMenu.innerHTML = entries
-      .map(
-        ([value, icon]) =>
-          `<button type="button" role="menuitemradio" aria-checked="${value === choice}" data-theme-choice="${value}">` +
-          `${icon}<span>${value.charAt(0).toUpperCase()}${value.slice(1)}</span>${value === choice ? icons.check : ''}</button>`
-      )
-      .join('')
+    themeMenu.innerHTML = entries.map(([value, icon]) =>
+      `<button type="button" role="menuitemradio" aria-checked="${value === choice}" data-theme-choice="${value}">` +
+      `${icon}<span>${value.charAt(0).toUpperCase()}${value.slice(1)}</span>${value === choice ? icons.check : ''}</button>`
+    ).join('')
   }
   const setThemeMenu = (open: boolean): void => {
     themeMenu.hidden = !open
@@ -119,8 +96,7 @@ async function main(): Promise<void> {
   renderThemeMenu()
   themeButton.addEventListener('click', (event) => {
     event.stopPropagation()
-    const isHidden = themeMenu.hidden === true
-    setThemeMenu(!isHidden)
+    setThemeMenu(!themeMenu.hidden)
   })
   themeMenu.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return
@@ -140,7 +116,6 @@ async function main(): Promise<void> {
     applyTheme('system')
     renderThemeMenu()
   })
-
   const sources = new Map<string, Promise<string>>()
   const loadSource = (path: string): Promise<string> => {
     let pending = sources.get(path)
@@ -166,7 +141,6 @@ async function main(): Promise<void> {
     const path = event.target.closest<HTMLElement>('[data-path]')?.dataset['path']
     if (path !== undefined) loadSource(path).catch(() => undefined)
   })
-
   let sectionIndex: Promise<readonly Section[]> | undefined
   const loadSections = (): Promise<readonly Section[]> => {
     sectionIndex ??= Promise.all(
@@ -180,7 +154,6 @@ async function main(): Promise<void> {
     ).then((lists) => lists.flat())
     return sectionIndex
   }
-
   const palette = createPalette({
     dialog: searchDialog,
     pages,
@@ -190,7 +163,6 @@ async function main(): Promise<void> {
     }
   })
   byId('open-search').addEventListener('click', () => palette.open())
-
   shortcutsDialog.innerHTML =
     '<div class="dialog-card"><h2>Keyboard shortcuts</h2><dl>' +
     `<dt>Search</dt><dd><kbd>/</kbd><kbd>${mod}</kbd><kbd>K</kbd></dd>` +
@@ -199,7 +171,6 @@ async function main(): Promise<void> {
   shortcutsDialog.addEventListener('click', (event) => {
     if (event.target === shortcutsDialog) shortcutsDialog.close()
   })
-
   const enhance = (): void => {
     content.querySelectorAll<HTMLButtonElement>('button.copy').forEach((button) => {
       button.innerHTML = icons.copy
@@ -212,36 +183,21 @@ async function main(): Promise<void> {
       figure.insertAdjacentHTML('beforeend', `<button type="button" class="expand">Show all ${lines} lines</button>`)
     })
   }
-
   let observer: IntersectionObserver | undefined
   const buildToc = (path: string, doc: Rendered): void => {
     observer?.disconnect()
     const entries = doc.headings.filter((heading) => heading.level === 2 || heading.level === 3)
-    toc.innerHTML =
-      entries.length === 0
-        ? ''
-        : '<h2>On This Page</h2><ul>' +
-          entries
-            .map(
-              (heading) =>
-                `<li><a href="#/${escapeHtml(path)}@${heading.id}" data-id="${heading.id}" data-level="${heading.level}">${escapeHtml(heading.text)}</a></li>`
-            )
-            .join('') +
-          '</ul>'
-    observer = new IntersectionObserver(
-      (observed) => {
-        for (const entry of observed) {
-          if (!entry.isIntersecting) continue
-          toc.querySelectorAll<HTMLAnchorElement>('a').forEach((link) => {
-            link.classList.toggle('active', link.dataset['id'] === entry.target.id)
-          })
-        }
-      },
-      { rootMargin: '-72px 0px -70% 0px' }
-    )
+    toc.innerHTML = entries.length === 0 ? '' : '<h2>On This Page</h2><ul>' + entries.map((heading) => `<li><a href="#/${escapeHtml(path)}@${heading.id}" data-id="${heading.id}" data-level="${heading.level}">${escapeHtml(heading.text)}</a></li>`).join('') + '</ul>'
+    observer = new IntersectionObserver((observed) => {
+      for (const entry of observed) {
+        if (!entry.isIntersecting) continue
+        toc.querySelectorAll<HTMLAnchorElement>('a').forEach((link) => {
+          link.classList.toggle('active', link.dataset['id'] === entry.target.id)
+        })
+      }
+    }, { rootMargin: '-72px 0px -70% 0px' })
     content.querySelectorAll<HTMLElement>('h2[id], h3[id]').forEach((heading) => observer?.observe(heading))
   }
-
   const setActive = (page: FlatPage | undefined): void => {
     sidebar.querySelectorAll<HTMLAnchorElement>('a').forEach((link) => {
       link.classList.toggle('active', page !== undefined && link.dataset['path'] === page.path)
@@ -249,11 +205,8 @@ async function main(): Promise<void> {
     quick.querySelectorAll<HTMLAnchorElement>('a').forEach((link) => {
       link.classList.toggle('active', page !== undefined && link.dataset['section'] === page.section)
     })
-    if (page !== undefined) {
-      sidebar.querySelector('a.active')?.scrollIntoView({ block: 'nearest' })
-    }
+    if (page !== undefined) sidebar.querySelector('a.active')?.scrollIntoView({ block: 'nearest' })
   }
-
   const scrollToAnchor = (anchor: string | undefined): void => {
     if (anchor === undefined) {
       window.scrollTo(0, 0)
@@ -261,10 +214,8 @@ async function main(): Promise<void> {
     }
     content.querySelector(`[id="${CSS.escape(anchor)}"]`)?.scrollIntoView()
   }
-
   let currentPath: string | undefined
   let navigation = 0
-
   const showLanding = (): void => {
     navigation += 1
     currentPath = undefined
@@ -276,7 +227,6 @@ async function main(): Promise<void> {
     enhance()
     window.scrollTo(0, 0)
   }
-
   const show = async (path: string, anchor: string | undefined): Promise<void> => {
     const token = ++navigation
     const page = byPath.get(path)
@@ -296,7 +246,7 @@ async function main(): Promise<void> {
       scrollToAnchor(anchor)
       return
     }
-    if (!renderedPages.has(path)) content.innerHTML = SKELETON
+    if (!renderedPages.has(path) && document.body.dataset['docPage'] !== path) content.innerHTML = SKELETON
     try {
       const doc = await renderPage(path)
       if (token !== navigation) return
@@ -304,12 +254,7 @@ async function main(): Promise<void> {
       const position = pages.findIndex((candidate) => candidate.path === path)
       const previous = pages[position - 1]
       const next = pages[position + 1]
-      const card = (target: FlatPage | undefined, kind: 'prev' | 'next'): string =>
-        target === undefined
-          ? ''
-          : `<a class="pager-card ${kind}" href="#/${escapeHtml(target.path)}"><span class="pager-label">` +
-            (kind === 'prev' ? `${icons.arrowLeft}Previous` : `Next${icons.arrowRight}`) +
-            `</span><span class="pager-title">${escapeHtml(target.title)}</span></a>`
+      const card = (target: FlatPage | undefined, kind: 'prev' | 'next'): string => target === undefined ? '' : `<a class="pager-card ${kind}" href="#/${escapeHtml(target.path)}"><span class="pager-label">` + (kind === 'prev' ? `${icons.arrowLeft}Previous` : `Next${icons.arrowRight}`) + `</span><span class="pager-title">${escapeHtml(target.title)}</span></a>`
       content.innerHTML =
         '<div class="page-head">' +
         `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Docs</a>${icons.chevronRight}<span>${escapeHtml(page.section)}</span>${icons.chevronRight}<span class="current">${escapeHtml(page.title)}</span></nav>` +
@@ -328,7 +273,6 @@ async function main(): Promise<void> {
       content.innerHTML = `<div class="doc"><h1>Could not load this page</h1><div class="alert">${escapeHtml(error instanceof Error ? error.message : String(error))}</div></div>`
     }
   }
-
   content.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return
     const copy = event.target.closest<HTMLButtonElement>('button.copy')
@@ -344,19 +288,13 @@ async function main(): Promise<void> {
       return
     }
     const copyPage = event.target.closest<HTMLButtonElement>('[data-action="copy-page"]')
-    if (copyPage !== null && currentPath !== undefined) {
-      void loadSource(currentPath).then((source) =>
-        copyWithFeedback(copyPage, source, `${icons.copy}<span>Copy page</span>`, `${icons.check}<span>Copied</span>`)
-      )
-    }
+    if (copyPage !== null && currentPath !== undefined) void loadSource(currentPath).then((source) => copyWithFeedback(copyPage, source, `${icons.copy}<span>Copy page</span>`, `${icons.check}<span>Copied</span>`))
   })
-
   const step = (delta: number): void => {
     const index = pages.findIndex((page) => page.path === currentPath)
     const target = pages[index + delta]
     if (index >= 0 && target !== undefined) location.hash = `#/${target.path}`
   }
-
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       closeNav()
@@ -375,7 +313,6 @@ async function main(): Promise<void> {
     else if (event.key === '[') step(-1)
     else if (event.key === ']') step(1)
   })
-
   let frame = 0
   const onScroll = (): void => {
     if (frame !== 0) return
@@ -388,7 +325,6 @@ async function main(): Promise<void> {
   }
   window.addEventListener('scroll', onScroll, { passive: true })
   toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
-
   const route = (): void => {
     const { path, anchor } = parseHash()
     if (path === '') showLanding()
@@ -397,6 +333,8 @@ async function main(): Promise<void> {
   window.addEventListener('hashchange', route)
   route()
 }
+
+installStaticNavigation()
 
 main().catch((error: unknown) => {
   const content = document.getElementById('content')

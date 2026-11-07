@@ -140,3 +140,51 @@
     grid-row: 1;
   }
 }
+
+.catalog,
+.catalog-controls,
+.catalog-layout,
+.icon-grid,
+.icon-detail {
+  min-width: 0;
+}
+
+.icon-detail {
+  overflow-wrap: anywhere;
+}
+
+.catalog-controls input,
+.catalog-controls select,
+.icon-copy-actions .btn {
+  min-height: 2.75rem;
+}
+
+@media (max-width: 560px) {
+  .catalog-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .catalog-controls label:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .catalog-controls input[type='search'],
+  .catalog-controls select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  }
+
+  .icon-tile {
+    min-height: 6.5rem;
+  }
+
+  .icon-detail {
+    padding: .75rem;
+  }
+}

@@ -168,3 +168,246 @@ mark { padding: 0 .1rem; border-radius: 3px; background: hsl(var(--warning) / .3
 [data-theme='dark'] .brand-mark {
   filter: brightness(0) invert(1);
 }
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+.header-inner,
+.shell,
+#content,
+.doc,
+.page-head,
+.page-actions,
+.landing,
+.card {
+  min-width: 0;
+}
+
+.doc {
+  overflow-wrap: anywhere;
+}
+
+.doc pre,
+.table-wrap {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+}
+
+.doc pre {
+  overflow-wrap: normal;
+  white-space: pre;
+}
+
+.doc table {
+  min-width: 24rem;
+}
+
+.doc :is(h1, h2, h3, h4) {
+  text-wrap: balance;
+}
+
+.doc :is(p, li) {
+  line-height: 1.75;
+}
+
+.page-head {
+  flex-wrap: wrap;
+}
+
+.page-actions {
+  flex-wrap: wrap;
+}
+
+.card-title,
+.card-sub,
+.pager-title,
+.breadcrumb {
+  overflow-wrap: anywhere;
+}
+
+#sidebar,
+.sidebar-wrap,
+#toc,
+.cmd-list {
+  overscroll-behavior: contain;
+}
+
+#search {
+  max-height: calc(100dvh - 2rem);
+}
+
+.cmd-list {
+  max-height: min(55dvh, 28rem);
+}
+
+.icon-tile,
+.copy,
+.btn-icon {
+  touch-action: manipulation;
+}
+
+@media (max-width: 1280px) {
+  .header-inner {
+    gap: .5rem;
+  }
+
+  .quick {
+    gap: .75rem;
+    margin-left: .5rem;
+  }
+
+  .search-button {
+    width: 13rem;
+  }
+
+  .shell {
+    gap: 0 1.5rem;
+  }
+}
+
+@media (max-width: 800px) {
+  :root {
+    --header: 4rem;
+  }
+
+  .header-inner {
+    padding-inline: .75rem;
+  }
+
+  .btn-icon,
+  #menu,
+  #theme {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+  }
+
+  .search-button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .sidebar-wrap {
+    max-height: calc(100dvh - var(--header));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  #content {
+    padding-block: 1.5rem 3rem;
+  }
+
+  .doc h1 {
+    font-size: clamp(1.75rem, 7vw, 2.25rem);
+  }
+
+  .doc h2 {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+  }
+
+  .page-actions {
+    width: 100%;
+  }
+
+  #search {
+    margin-top: 1rem;
+  }
+
+  .cmd-item {
+    min-height: 2.75rem;
+  }
+
+  html:not([data-enhanced]) .sidebar-wrap {
+    position: static;
+    width: 100%;
+    max-height: none;
+    height: auto;
+    transform: none;
+    border: 0;
+  }
+
+  html:not([data-enhanced]) #menu,
+  html:not([data-enhanced]) #open-search,
+  html:not([data-enhanced]) #theme {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .header-inner > #repo {
+    display: none;
+  }
+
+  .search-button span {
+    display: none;
+  }
+
+  .search-button {
+    flex: none;
+    width: 2.75rem;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .hero {
+    padding-block: 1rem 2rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.25rem, 13vw, 3.5rem);
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .actions .btn {
+    min-height: 2.75rem;
+  }
+
+  .doc ul,
+  .doc ol {
+    padding-left: 1.25rem;
+  }
+
+  .anchor {
+    display: none;
+  }
+
+  figure.code pre {
+    padding: .75rem;
+    font-size: .75rem;
+  }
+
+  .cmd-chip,
+  .cmd-footer {
+    display: none;
+  }
+}
+
+html:not([data-enhanced]) .copy,
+html:not([data-enhanced]) #open-search,
+html:not([data-enhanced]) #theme {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
