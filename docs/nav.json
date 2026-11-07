@@ -35,7 +35,8 @@
     {
       "title": "Libraries",
       "pages": [
-        { "title": "@gambrel/icons", "path": "icons", "summary": "A hand-drawn icon library, generated from SVG files." }
+        { "title": "@gambrel/icons", "path": "icons", "summary": "A hand-drawn icon library, generated from SVG files." },
+        { "title": "@gambrel/components", "path": "components", "summary": "shadcn-style UI components with plain CSS." }
       ]
     },
     {

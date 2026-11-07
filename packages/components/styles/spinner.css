@@ -1,0 +1,3 @@
+.gb-spinner { animation: gb-spin 1s linear infinite; }
+@keyframes gb-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .gb-spinner { animation-duration: 3s; } }

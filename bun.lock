@@ -52,6 +52,19 @@
         "@gambrel/router": "workspace:*",
       },
     },
+    "packages/components": {
+      "name": "@gambrel/components",
+      "version": "0.1.0",
+      "dependencies": {
+        "@gambrel/icons": "workspace:*",
+        "@gambrel/reactivity": "workspace:*",
+        "@gambrel/view": "workspace:*",
+      },
+      "devDependencies": {
+        "@gambrel/browser": "workspace:*",
+        "happy-dom": "latest",
+      },
+    },
     "packages/core": {
       "name": "@gambrel/core",
       "version": "0.1.0",
@@ -101,6 +114,8 @@
     "@gambrel/bun": ["@gambrel/bun@workspace:packages/bun"],
 
     "@gambrel/compiler": ["@gambrel/compiler@workspace:packages/compiler"],
+
+    "@gambrel/components": ["@gambrel/components@workspace:packages/components"],
 
     "@gambrel/core": ["@gambrel/core@workspace:packages/core"],
 

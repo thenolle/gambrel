@@ -78,9 +78,9 @@ export function parseSvg(icon: string, source: string): IconNode {
   const viewBox = /viewBox="([^"]*)"/.exec(root[1] ?? '')?.[1]
   if (viewBox !== '0 0 24 24') throw new IconError(icon, `viewBox must be "0 0 24 24", received ${JSON.stringify(viewBox)}`)
   const shapes: Array<readonly [string, Readonly<Record<string, string>>]> = []
-  const leftover = (root[2] ?? '').replace(/<([a-z]+)\s+([^<>]*?)\s*\/>/g, (_match, tag: string, attributes: string) => {
+  const leftover = (root[2] ?? '').replace(/<([a-z]+)(?:\s+([^<>]*?))?\s*\/>/g, (_match, tag: string, attributes: string | undefined) => {
     if (ALLOWED[tag] === undefined) throw new IconError(icon, `<${tag}> is not allowed (use ${Object.keys(ALLOWED).join(', ')})`)
-    shapes.push([tag, parseAttributes(icon, tag, attributes)])
+    shapes.push([tag, parseAttributes(icon, tag, attributes ?? '')])
     return ''
   })
   if (leftover.trim() !== '') throw new IconError(icon, `unsupported content: ${leftover.trim().slice(0, 40)} (use self-closing shape elements only)`)
@@ -92,12 +92,12 @@ export function parseSvg(icon: string, source: string): IconNode {
  * Reads every `*.svg` in a directory, sorted by name. All problems are reported together.
  */
 export async function readIconDirectory(directory: string): Promise<IconEntry[]> {
-  const files = (await readdir(directory)).filter((file) => file.endsWith('.svg')).sort()
+  const names = (await readdir(directory)).filter((file) => file.endsWith('.svg')).map((file) => file.slice(0, -4)).sort()
   const entries: IconEntry[] = []
   const problems: string[] = []
   const components = new Map<string, string>()
-  for (const file of files) {
-    const name = file.slice(0, -4)
+  for (const name of names) {
+    const file = `${name}.svg`
     if (!NAME.test(name)) {
       problems.push(`${file}: the name must be kebab-case (lowercase letters, digits and single hyphens, starting with a letter)`)
       continue

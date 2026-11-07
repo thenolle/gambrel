@@ -1,0 +1,3 @@
+.gb-skeleton { border-radius: calc(var(--radius) - 2px); background: hsl(var(--muted)); animation: gb-pulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
+@keyframes gb-pulse { 50% { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .gb-skeleton { animation: none; } }

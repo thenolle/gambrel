@@ -1,0 +1,3 @@
+.gb-separator { flex: none; background: hsl(var(--border)); }
+.gb-separator-horizontal { width: 100%; height: 1px; }
+.gb-separator-vertical { width: 1px; height: 100%; }

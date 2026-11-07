@@ -1,0 +1,5 @@
+.gb-badge { display: inline-flex; align-items: center; padding: .125rem .625rem; border: 1px solid transparent; border-radius: 999px; font-size: .75rem; font-weight: 600; line-height: 1.4; transition: background-color .15s; }
+.gb-badge-default { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+.gb-badge-secondary { background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); }
+.gb-badge-destructive { background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); }
+.gb-badge-outline { border-color: hsl(var(--border)); color: hsl(var(--foreground)); }

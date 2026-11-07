@@ -1,0 +1,4 @@
+.gb-textarea { display: flex; width: 100%; min-height: 5rem; padding: .5rem .75rem; border: 1px solid hsl(var(--input)); border-radius: calc(var(--radius) - 2px); background: transparent; color: inherit; font: inherit; font-size: .875rem; resize: vertical; }
+.gb-textarea::placeholder { color: hsl(var(--muted-foreground)); }
+.gb-textarea:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+.gb-textarea:disabled { cursor: not-allowed; opacity: .5; }

@@ -1,0 +1,30 @@
+{
+  "name": "@gambrel/components",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Accessible, themeable UI components for Gambrel in the style of shadcn/ui, with plain CSS and no build step for consumers.",
+  "license": "PolyForm-Strict-1.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./styles.css": "./src/styles.css"
+  },
+  "files": ["src", "styles"],
+  "dependencies": {
+    "@gambrel/icons": "workspace:*",
+    "@gambrel/reactivity": "workspace:*",
+    "@gambrel/view": "workspace:*"
+  },
+  "devDependencies": {
+    "@gambrel/browser": "workspace:*",
+    "happy-dom": "latest"
+  },
+  "scripts": {
+    "build:css": "bun scripts/build-css.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

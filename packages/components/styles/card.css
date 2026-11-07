@@ -1,0 +1,6 @@
+.gb-card { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 4px); background: hsl(var(--card)); color: hsl(var(--card-foreground)); box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.gb-card-header { display: flex; flex-direction: column; gap: .375rem; padding: 1.5rem; }
+.gb-card-title { margin: 0; font-size: 1.5rem; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+.gb-card-description { margin: 0; font-size: .875rem; color: hsl(var(--muted-foreground)); }
+.gb-card-content { padding: 0 1.5rem 1.5rem; }
+.gb-card-footer { display: flex; align-items: center; padding: 0 1.5rem 1.5rem; }

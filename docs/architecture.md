@@ -11,6 +11,7 @@ Gambrel is a set of small packages with explicit boundaries. Each one has a sing
 | `@gambrel/view`       | JSX runtime and server renderer                            | nothing                        |
 | `@gambrel/icons`      | Icon components                                            | `view`                         |
 | `@gambrel/reactivity` | Signals, effects, ownership                                | nothing                        |
+| `@gambrel/components` | Reusable components                                        | `view`, `reactivity`, `icons`  |
 | `@gambrel/router`     | Matching, resolution, hydration payload, `composeRoute`    | `view`                         |
 | `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                            | `view`, `reactivity`, `router` |
 | `@gambrel/ssr`        | Document request handler                                   | `router`, `view`               |
