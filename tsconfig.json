@@ -11,6 +11,7 @@
     { "path": "packages/ssr" },
     { "path": "packages/icons" },
     { "path": "packages/components" },
-    { "path": "examples/app" }
+    { "path": "examples/app" },
+    { "path": "examples/modes" }
   ]
 }

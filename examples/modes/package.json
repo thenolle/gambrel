@@ -1,0 +1,26 @@
+{
+  "name": "@gambrel/example-modes",
+  "version": "0.1.0",
+  "private": true,
+  "license": "PolyForm-Strict-1.0.0",
+  "description": "Complete task-board examples for SSR hydration, CSR and server-only HTML.",
+  "type": "module",
+  "dependencies": {
+    "@gambrel/browser": "workspace:*",
+    "@gambrel/bun": "workspace:*",
+    "@gambrel/components": "workspace:*",
+    "@gambrel/core": "workspace:*",
+    "@gambrel/icons": "workspace:*",
+    "@gambrel/reactivity": "workspace:*",
+    "@gambrel/router": "workspace:*",
+    "@gambrel/ssr": "workspace:*",
+    "@gambrel/view": "workspace:*"
+  },
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "ssr": "bun run build && bun dist/server.js ssr",
+    "csr": "bun run build && bun dist/server.js csr",
+    "server": "bun run build && bun dist/server.js server",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

@@ -11,3 +11,4 @@ packages/icons/preview.html
 .release
 website/public/icon-catalog.js
 website/public/icons.json
+examples/modes/.data/
