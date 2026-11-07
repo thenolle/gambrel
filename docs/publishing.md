@@ -64,8 +64,28 @@ bun add @gambrel/core @gambrel/bun @gambrel/view @gambrel/router @gambrel/ssr @g
 
 Gambrel runs on Bun. Configure TSX with `"jsx": "react-jsx"` and `"jsxImportSource": "@gambrel/view"`.
 
-## Limitations
+## Verify packed packages outside the workspace
 
-- The smoke test imports each built package against the workspace copies of its dependencies, not against the published ones.
-- There is no provenance attestation, changelog generation or automatic git tagging. Tag the release in git yourself.
-- A release is all-or-nothing in order: if one package fails to publish, the tool stops before the next. Fix the problem and run it again.
+Before publishing, verify the real package tarballs in a fresh temporary consumer:
+
+```bash
+bun run release build
+bun run release verify
+bun run release:consumer
+```
+
+The consumer command packs every staged package, installs the tarballs outside the repository, checks local JavaScript resolution, runs a strict TypeScript check, exercises SSR and HTTP primitives, and bundles a browser entry.
+
+Gambrel dependencies are pinned to the local tarballs, including transitive dependencies. The check does not publish anything or modify npm credentials.
+
+TypeScript and Bun type packages are installed using the root project's configured versions. Network access may be needed.
+
+Successful temporary consumers are deleted. Use `--keep` to retain one:
+
+```bash
+bun run release:consumer --keep
+```
+
+Failures preserve the directory and print its location for diagnosis.
+
+This is not a replacement for real-browser verification or a complete consumer application.

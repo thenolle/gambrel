@@ -18,6 +18,7 @@
     "docs": "bun run --filter @gambrel/website dev",
     "docs:build": "bun run --filter @gambrel/website build",
     "release": "bun tools/release/src/cli.ts",
+    "release:consumer": "bun tools/release/src/consumer.ts",
     "test": "bun test"
   },
   "devDependencies": {
