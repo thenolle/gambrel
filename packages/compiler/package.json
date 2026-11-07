@@ -1,6 +1,6 @@
 {
   "name": "@gambrel/compiler",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "PolyForm-Strict-1.0.0",
   "description": "Route discovery, manifests, builds",
   "private": true,
