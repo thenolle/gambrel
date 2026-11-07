@@ -1,0 +1,10 @@
+.gb-table-wrap { position: relative; width: 100%; overflow: auto; }
+.gb-table { width: 100%; border-collapse: collapse; caption-side: bottom; font-size: .875rem; }
+.gb-table-header .gb-table-row { border-bottom: 1px solid hsl(var(--border)); }
+.gb-table-row { border-bottom: 1px solid hsl(var(--border)); transition: background-color .15s; }
+.gb-table-body .gb-table-row:last-child { border-bottom: 0; }
+.gb-table-body .gb-table-row:hover { background: hsl(var(--muted) / .5); }
+.gb-table-footer { border-top: 1px solid hsl(var(--border)); background: hsl(var(--muted) / .5); font-weight: 500; }
+.gb-table-head { height: 2.5rem; padding: 0 .5rem; text-align: left; vertical-align: middle; font-weight: 500; color: hsl(var(--muted-foreground)); }
+.gb-table-cell { padding: .5rem; vertical-align: middle; }
+.gb-table-caption { margin-top: 1rem; font-size: .875rem; color: hsl(var(--muted-foreground)); }

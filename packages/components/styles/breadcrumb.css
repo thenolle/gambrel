@@ -1,0 +1,6 @@
+.gb-breadcrumb-list { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; margin: 0; padding: 0; list-style: none; font-size: .875rem; color: hsl(var(--muted-foreground)); }
+.gb-breadcrumb-item { display: inline-flex; align-items: center; gap: .375rem; }
+.gb-breadcrumb-link { color: inherit; text-decoration: none; transition: color .15s; }
+.gb-breadcrumb-link:hover { color: hsl(var(--foreground)); }
+.gb-breadcrumb-page { color: hsl(var(--foreground)); font-weight: 400; }
+.gb-breadcrumb-separator { display: inline-flex; align-items: center; }

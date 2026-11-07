@@ -49,11 +49,51 @@ Colors come from CSS variables that hold HSL triplets, as in shadcn/ui: `--backg
 | `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` | Structure for grouped content                                                                    |
 | `Alert`, `AlertTitle`, `AlertDescription`                                         | `variant`: default, destructive. Put an icon first.                                              |
 | `Input`, `Textarea`, `Label`                                                      | Form basics. Link a label with `for`.                                                            |
-| `Separator`                                                                       | `orientation`, `decorative` (default true)                                                       |
-| `Skeleton`, `Spinner`, `Progress`                                                 | Loading and progress. `Progress` takes a number or a signal.                                     |
-| `Kbd`                                                                             | A keyboard key                                                                                   |
+| `Checkbox`, `Radio`, `RadioGroup`, `Select`                                       | Native controls, styled. See below.                                                              |
+| `Switch`, `Toggle`                                                                | On/off controls with `role="switch"` and `aria-pressed`                                          |
+| `Tabs`, `Accordion`, `Collapsible`                                                | Disclosure patterns with full keyboard and ARIA support                                          |
+| `Avatar`, `AvatarImage`, `AvatarFallback`                                         | The image hides itself if it fails, revealing the fallback                                       |
+| `Breadcrumb` and its parts                                                        | `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbSeparator`    |
+| `Table` and its parts                                                             | `Table` scrolls horizontally when too wide                                                       |
+| `AspectRatio`                                                                     | `ratio` is width divided by height                                                               |
+| `Separator`, `Skeleton`, `Spinner`, `Progress`, `Kbd`                             | Layout, loading and progress                                                                     |
 
 Every component accepts `class`, `children`, and any other attribute, which is passed to the root element.
+
+## Stateful components
+
+Tabs, Accordion, Radio group and Select are described by data instead of nested child components, because they work the same on the server and in the browser without any hidden shared state.
+
+```tsx
+<Tabs
+  id="account"
+  items={[
+    { value: 'profile', label: 'Profile', content: <ProfileForm /> },
+    { value: 'billing', label: 'Billing', content: <BillingForm /> }
+  ]}
+/>
+
+<Accordion
+  id="faq"
+  type="multiple"
+  items={[{ value: 'what', title: 'What is Gambrel?', content: 'A small framework.' }]}
+/>
+
+<RadioGroup name="plan" defaultValue="free" options={[{ value: 'free', label: 'Free' }, { value: 'pro', label: 'Pro' }]} />
+<Select placeholder="Country" options={[{ value: 'fr', label: 'France' }]} />
+```
+
+Each component works uncontrolled (give it `defaultValue`) or controlled (give it `value` as a value or a signal, and listen with `onValueChange`):
+
+```tsx
+const plan = signal('free')
+
+<RadioGroup name="plan" value={plan} onValueChange={(value) => plan.set(value)} options={options} />
+```
+
+Tabs, Accordion and Collapsible build element ids from their `id` prop and each item's `value`. Use short, id-safe values (letters, digits, hyphens) and a distinct `id` for each component on a page.
+
+Tabs follow the ARIA pattern: the arrow keys, Home and End move between enabled tabs. A `Switch` is a button with `role="switch"`: it does not submit a form value, so use `Checkbox` for form fields.
 
 ## Variants of your own
 

@@ -1,0 +1,9 @@
+.gb-radio { appearance: none; -webkit-appearance: none; display: inline-grid; place-content: center; flex: none; width: 1rem; height: 1rem; margin: 0; border: 1px solid hsl(var(--primary)); border-radius: 999px; background: transparent; cursor: pointer; }
+.gb-radio::after { content: ''; width: .5rem; height: .5rem; border-radius: 999px; background: hsl(var(--primary)); transform: scale(0); transition: transform .1s; }
+.gb-radio:checked::after { transform: scale(1); }
+.gb-radio:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.gb-radio:disabled { cursor: not-allowed; opacity: .5; }
+.gb-radio-group { display: flex; gap: .5rem; }
+.gb-radio-group-vertical { flex-direction: column; }
+.gb-radio-group-horizontal { flex-direction: row; flex-wrap: wrap; gap: 1rem; }
+.gb-radio-option { display: inline-flex; align-items: center; gap: .5rem; font-size: .875rem; cursor: pointer; }

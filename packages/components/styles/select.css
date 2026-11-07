@@ -1,0 +1,5 @@
+.gb-select-wrap { position: relative; display: inline-flex; width: 100%; align-items: center; }
+.gb-select { appearance: none; -webkit-appearance: none; width: 100%; height: 2.25rem; padding: 0 2rem 0 .75rem; border: 1px solid hsl(var(--input)); border-radius: calc(var(--radius) - 2px); background: transparent; color: inherit; font: inherit; font-size: .875rem; cursor: pointer; }
+.gb-select:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+.gb-select:disabled { cursor: not-allowed; opacity: .5; }
+.gb-select-icon { position: absolute; right: .625rem; pointer-events: none; color: hsl(var(--muted-foreground)); }

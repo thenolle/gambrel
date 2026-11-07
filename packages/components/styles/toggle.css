@@ -1,0 +1,10 @@
+.gb-toggle { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border: 1px solid transparent; border-radius: calc(var(--radius) - 2px); background: transparent; color: inherit; font: inherit; font-size: .875rem; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s; }
+.gb-toggle:hover { background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+.gb-toggle:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.gb-toggle:disabled { pointer-events: none; opacity: .5; }
+.gb-toggle[data-state='on'] { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.gb-toggle-outline { border-color: hsl(var(--input)); }
+.gb-toggle-outline:hover { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.gb-toggle-md { height: 2.25rem; padding: 0 .75rem; }
+.gb-toggle-sm { height: 2rem; padding: 0 .625rem; }
+.gb-toggle-lg { height: 2.5rem; padding: 0 1.25rem; }

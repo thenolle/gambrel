@@ -1,0 +1,7 @@
+:root { --gb-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); }
+.gb-checkbox { appearance: none; -webkit-appearance: none; display: inline-grid; place-content: center; flex: none; width: 1rem; height: 1rem; margin: 0; border: 1px solid hsl(var(--primary)); border-radius: 4px; background: transparent; cursor: pointer; }
+.gb-checkbox::after { content: ''; width: .75rem; height: .75rem; background: hsl(var(--primary-foreground)); transform: scale(0); transition: transform .1s; -webkit-mask: var(--gb-check) center / contain no-repeat; mask: var(--gb-check) center / contain no-repeat; }
+.gb-checkbox:checked { background: hsl(var(--primary)); }
+.gb-checkbox:checked::after { transform: scale(1); }
+.gb-checkbox:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.gb-checkbox:disabled { cursor: not-allowed; opacity: .5; }
