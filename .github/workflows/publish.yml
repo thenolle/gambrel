@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Only check, build and show what would be published'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: bun install --frozen-lockfile
+      - name: Release
+        run: >-
+          bun run release publish --client npm
+          ${{ (github.event_name == 'push' || inputs.dry-run == false) && '--yes' || '' }}
+          ${{ github.event_name == 'push' && format('--expect-version {0}', github.ref_name) || '' }}
+          ${{ vars.NPM_PROVENANCE == 'true' && '--provenance' || '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

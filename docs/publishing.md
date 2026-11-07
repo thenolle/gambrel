@@ -4,23 +4,43 @@ The Gambrel packages are published to npm as built JavaScript with type declarat
 
 ## Before the first release
 
-- **An npm account** that owns the `@gambrel` scope. Create an organization named `gambrel` on npmjs.com, or change the scope in every package. Check that the name is free with `npm view @gambrel/core`.
-- **Login.** Run `npm login`, or provide an automation token in `.npmrc`.
-- **The license.** The packages are licensed under PolyForm Strict 1.0.0: noncommercial use only, no distribution, no modification. Publishing on npm does not change this, but it means npm users cannot use the packages commercially. That is a decision to make deliberately.
+1. An npm account, and the organization `gambrel` (https://www.npmjs.com/org/create) so that you own the `@gambrel` scope.
+2. Be logged in: `npm login`, or an access token in the `NPM_CONFIG_TOKEN` variable or in `~/.npmrc`.
+3. Run `bun run release doctor`. It checks your setup and says what is missing.
 
-## The release steps
+> [!NOTE]
+> The packages are licensed under PolyForm Strict 1.0.0 (noncommercial use only, no distribution, no modification). Publishing on npm does not change that, but it means npm users cannot use them commercially. Decide that deliberately.
+
+## Publish from the terminal
 
 ```bash
-bun run release plan            # list the packages in publish order
-bun run release version 0.1.0   # set one version for every package
-bun run release check           # validate manifests, then run typecheck and tests
-bun run release build           # build every package into .release/
-bun run release verify          # check the built packages and import each entry point
-bun run release publish         # check, build, verify, then a dry run
-bun run release publish --yes   # publish for real
+bun run release publish
 ```
 
-`publish` always runs the checks, the build and the verification first, and it is a **dry run** unless you add `--yes`. Versions already on the registry are skipped, so an interrupted release can be resumed. Useful flags: `--tag next` for a prerelease tag, `--otp <code>` for two-factor authentication, and `--skip-tests` to skip the test run.
+This checks the manifests, runs the type check and the tests, builds every package, verifies the built packages against each other, lists the contents of each tarball, and then asks you to type `yes`. Nothing is published until you do. Useful options:
+
+| Option         | Meaning                                 |
+| -------------- | --------------------------------------- |
+| `--yes`        | Publish without the question            |
+| `--tag next`   | Publish under a tag other than `latest` |
+| `--otp 123456` | A two-factor code                       |
+| `--skip-tests` | Skip the typecheck and test run         |
+| `--client npm` | Publish with npm instead of Bun         |
+
+Versions already on the registry are skipped, so an interrupted release can be resumed by running the command again.
+
+To change the version first: `bun run release version 0.2.0`, then commit.
+
+## Publish from GitHub
+
+Add an Actions secret `NPM_TOKEN`, then push a tag that matches the version:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The workflow in `.github/workflows/publish.yml` runs the same steps on a clean machine. You can also run it from the Actions tab; manual runs are dry runs unless you untick the box. Provenance is available for public repositories: set the repository variable `NPM_PROVENANCE` to `true`.
 
 ## What is published
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { checkManifest, isSemver, rewriteDeclarationSpecifiers, rewriteManifest, sourceEntries, stageExports, topologicalOrder, type PackageManifest, type WorkspacePackage } from '../src/lib.ts'
+import { importsTypeScriptSource, checkManifest, isSemver, rewriteDeclarationSpecifiers, rewriteManifest, sourceEntries, stageExports, topologicalOrder, type PackageManifest, type WorkspacePackage } from '../src/lib.ts'
 
 function pkg(name: string, dependencies: Record<string, string> = {}): WorkspacePackage {
   const manifest: PackageManifest = {
@@ -146,5 +146,17 @@ describe('declaration files', () => {
         "import { v } from '@gambrel/view'"
       ].join('\n')
     )
+  })
+})
+
+describe('source import detection', () => {
+  test('flags real imports and ignores code inside strings', () => {
+    expect(importsTypeScriptSource("import { a } from './a.ts'\nconsole.log(a)")).toBe(true)
+    expect(importsTypeScriptSource("export * from '../b.tsx'")).toBe(true)
+    expect(importsTypeScriptSource("import './side.ts'")).toBe(true)
+    expect(importsTypeScriptSource("export {\n  a\n} from './c.ts'")).toBe(true)
+    expect(importsTypeScriptSource('const text = "export { routes } from \'./routes.ts\'"')).toBe(false)
+    expect(importsTypeScriptSource("  \"import x from './x.ts'\",")).toBe(false)
+    expect(importsTypeScriptSource("import { v } from '@gambrel/view'\nimport './local.js'")).toBe(false)
   })
 })

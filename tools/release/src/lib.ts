@@ -204,3 +204,14 @@ export function readmeFor(manifest: PackageManifest): string {
     ''
   ].join('\n')
 }
+
+const TS_IMPORT = /^[ \t]*(?:(?:import|export)\b[^'"\n]*?|\}[^'"\n]*?)\bfrom\s*['"]\.{1,2}\/[^'"]*\.tsx?['"]|^[ \t]*import\s*['"]\.{1,2}\/[^'"]*\.tsx?['"]/m
+
+/**
+ * True when the text has an import or export statement that points at a TypeScript source
+ * file. Only statements at the start of a line count, so code that merely appears inside a
+ * string, such as the compiler's generated-file templates, is not flagged.
+ */
+export function importsTypeScriptSource(text: string): boolean {
+  return TS_IMPORT.test(text)
+}
