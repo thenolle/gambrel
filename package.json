@@ -6,6 +6,7 @@
   "workspaces": [
     "packages/*",
     "examples/*",
+    "tools/*",
     "website"
   ],
   "scripts": {
@@ -15,6 +16,7 @@
     "typecheck": "bun run --filter '@gambrel/*' typecheck",
     "docs": "bun run --filter @gambrel/website dev",
     "docs:build": "bun run --filter @gambrel/website build",
+    "release": "bun tools/release/src/cli.ts",
     "test": "bun test"
   },
   "devDependencies": {

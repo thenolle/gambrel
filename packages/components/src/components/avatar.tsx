@@ -13,8 +13,8 @@ export interface AvatarImageProps extends BaseProps {
 }
 
 function hideBroken(event: ViewEvent): void {
-  const image = event.currentTarget
-  if (image instanceof HTMLElement) image.hidden = true
+  const image = event.currentTarget as HTMLElement | null
+  if (image !== null) image.hidden = true
 }
 
 /**

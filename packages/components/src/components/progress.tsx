@@ -26,7 +26,10 @@ export function Progress(props: ProgressProps): Child {
       {...rest}
       class={cn('gb-progress', className)}
     >
-      <div class="gb-progress-indicator" style={() => `transform: translateX(-${100 - (current() / max) * 100}%)`} />
+      <div
+        class="gb-progress-indicator"
+        style={() => `transform: translateX(-${Math.round((100 - (current() / max) * 100) * 100) / 100}%)`}
+      />
     </div>
   )
 }

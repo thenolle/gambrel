@@ -51,7 +51,7 @@ export function Tabs(props: TabsProps): Child {
     state.set(target.value)
     const list = (event.currentTarget as HTMLElement).parentElement
     const next = list === null ? undefined : Array.from(list.children).find((tab) => tab.getAttribute('data-value') === target.value)
-    if (next instanceof HTMLElement) next.focus()
+    if (next !== undefined) (next as HTMLElement).focus()
   }
 
   return (

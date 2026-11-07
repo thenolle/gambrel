@@ -1,0 +1,4 @@
+.gb-pagination { display: flex; justify-content: center; width: 100%; }
+.gb-pagination-list { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; margin: 0; padding: 0; list-style: none; }
+.gb-pagination-ellipsis { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; color: hsl(var(--muted-foreground)); }
+.gb-pagination-disabled { pointer-events: none; opacity: .5; }

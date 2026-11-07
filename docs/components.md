@@ -57,6 +57,11 @@ Colors come from CSS variables that hold HSL triplets, as in shadcn/ui: `--backg
 | `Table` and its parts                                                             | `Table` scrolls horizontally when too wide                                                       |
 | `AspectRatio`                                                                     | `ratio` is width divided by height                                                               |
 | `Separator`, `Skeleton`, `Spinner`, `Progress`, `Kbd`                             | Layout, loading and progress                                                                     |
+| `Dialog`, `AlertDialog`, `Sheet`                                                  | Modal overlays built on the native `<dialog>` element                                            |
+| `Popover`, `Tooltip`, `DropdownMenu`                                              | Floating content next to a trigger                                                               |
+| `Toaster`, `toast()`                                                              | Notifications                                                                                    |
+| `Pagination`, `Slider`, `ScrollArea`                                              | Navigation, range input and a scrollable region                                                  |
+| `H1` to `H4`, `P`, `Lead`, `Muted`, `Blockquote`, `InlineCode`                    | Typography                                                                                       |
 
 Every component accepts `class`, `children`, and any other attribute, which is passed to the root element.
 
@@ -102,6 +107,81 @@ Tabs follow the ARIA pattern: the arrow keys, Home and End move between enabled 
 ```tsx
 <a href="/docs" class={buttonVariants({ variant: 'secondary', size: 'lg' })}>Read the docs</a>
 ```
+
+## Overlays
+
+Dialog, Alert dialog and Sheet use the native `<dialog>` element, so the browser provides the focus trap, Escape handling and the inert page behind. They render closed on the server and open after the page is interactive.
+
+```tsx
+<Dialog
+  id="edit"
+  trigger={<Button>Edit profile</Button>}
+  title="Edit profile"
+  description="Make changes and save."
+  footer={(close) => <Button onClick={close}>Done</Button>}
+>
+  <Input placeholder="Name" />
+</Dialog>
+```
+
+`trigger` is an element (wrapped in a clickable span) or a function that receives the props to spread on your own trigger, which gives it the right ARIA attributes:
+
+```tsx
+<Popover id="filters" trigger={(props) => <Button variant="outline" {...props}>Filters</Button>}>
+  Choose filters here.
+</Popover>
+```
+
+`AlertDialog` asks for a decision (`cancelLabel`, `actionLabel`, `onAction`, `destructive`), and `Sheet` docks to a `side`. Control any overlay with `open` and `onOpenChange`, or let it manage itself with `defaultOpen`.
+
+`Popover` and `DropdownMenu` are positioned with CSS using `side` and `align`; they do not move to avoid the edge of the viewport. They close on Escape and on a press outside. The menu is described by data:
+
+```tsx
+<DropdownMenu
+  id="account"
+  trigger={(props) => <Button variant="ghost" {...props}>Account</Button>}
+  items={[
+    { type: 'label', label: 'Signed in' },
+    { label: 'Profile', shortcut: 'P', onSelect: () => openProfile() },
+    { type: 'separator' },
+    { label: 'Sign out', destructive: true, onSelect: () => signOut() }
+  ]}
+/>
+```
+
+ArrowUp, ArrowDown, Home and End move between items, and Escape returns focus to the trigger.
+
+`Tooltip` wraps the element that gets the hint and shows it on hover and keyboard focus:
+
+```tsx
+<Tooltip id="save-hint" content="Save your work" side="bottom"><Button>Save</Button></Tooltip>
+```
+
+## Toasts
+
+Render one `<Toaster />` in your root layout, then call `toast()` from event handlers in the browser:
+
+```tsx
+import { Button, toast, Toaster } from '@gambrel/components'
+
+<Toaster position="bottom-right" />
+<Button onClick={() => toast({ title: 'Saved', description: 'Your changes are live.' })}>Save</Button>
+```
+
+`toast()` returns an id for `dismissToast(id)`. Options are `title`, `description`, `variant` (`default` or `destructive`) and `duration` in milliseconds (`0` keeps it until dismissed, default 4000).
+
+> [!WARNING]
+> `toast()` throws if it runs while rendering on the server, because a shared store would leak between requests. Call it from handlers. `createToasts()` gives you an independent store.
+
+## Pagination
+
+`Pagination` renders real links, so it works without JavaScript:
+
+```tsx
+<Pagination page={3} pageCount={12} href={(page) => `/posts?page=${page}`} />
+```
+
+`paginationRange(page, pageCount, siblings)` returns the numbers and `'ellipsis'` markers if you want to build your own.
 
 ## Add a component
 

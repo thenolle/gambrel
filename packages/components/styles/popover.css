@@ -1,0 +1,9 @@
+.gb-popover { position: relative; display: inline-block; }
+.gb-popover-content { position: absolute; z-index: 50; min-width: 12rem; padding: 1rem; border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 2px); background: hsl(var(--popover)); color: hsl(var(--popover-foreground)); box-shadow: 0 8px 24px rgb(0 0 0 / .14); font-size: .875rem; }
+.gb-popover-bottom { top: calc(100% + .375rem); }
+.gb-popover-top { bottom: calc(100% + .375rem); }
+.gb-popover-left { top: 0; right: calc(100% + .375rem); }
+.gb-popover-right { top: 0; left: calc(100% + .375rem); }
+.gb-popover-bottom.gb-popover-align-start, .gb-popover-top.gb-popover-align-start { left: 0; }
+.gb-popover-bottom.gb-popover-align-end, .gb-popover-top.gb-popover-align-end { right: 0; }
+.gb-popover-bottom.gb-popover-align-center, .gb-popover-top.gb-popover-align-center { left: 50%; transform: translateX(-50%); }

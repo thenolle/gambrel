@@ -8,3 +8,4 @@
 .gb-accordion-chevron { flex: none; transition: transform .2s; }
 .gb-accordion-trigger[aria-expanded='true'] .gb-accordion-chevron { transform: rotate(180deg); }
 .gb-accordion-inner { padding-bottom: 1rem; font-size: .875rem; }
+.gb-accordion-content { overflow: hidden; }

@@ -16,7 +16,7 @@ describe('stylesheet', () => {
     const missing: string[] = []
     for (const file of await readdir(directory)) {
       const source = await readFile(join(directory, file), 'utf8')
-      for (const name of new Set(source.match(/gb-[a-z0-9]+(?:-[a-z0-9]+)*/g) ?? [])) {
+      for (const name of new Set(source.match(/(?<![\w-])gb-[a-z0-9]+(?:-[a-z0-9]+)*/g) ?? [])) {
         if (!css.includes(`.${name}`)) missing.push(`${file}: .${name}`)
       }
     }

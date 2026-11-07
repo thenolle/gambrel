@@ -46,4 +46,13 @@ describe('createControllable', () => {
     source.set(true)
     expect(state.get()).toBe(true)
   })
+
+  test('setting the current value reports nothing', () => {
+    const seen: number[] = []
+    const state = createControllable({ defaultValue: 1, onChange: (value) => void seen.push(value) })
+    state.set(1)
+    state.set(2)
+    state.set(2)
+    expect(seen).toEqual([2])
+  })
 })

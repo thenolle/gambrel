@@ -6,11 +6,13 @@ export function createDom(markup = '') {
   document.body.innerHTML = `<div id="app">${markup}</div>`
   const container = document.getElementById('app')
   if (container === null) throw new Error('Test container is missing')
-  const dispatch = (element: Element, event: unknown): void => {
-    element.dispatchEvent(event as Event)
+  const fire = (target: EventTarget, type: string, init: Record<string, unknown> = {}): void => {
+    target.dispatchEvent(new window.Event(type, { bubbles: true, cancelable: true, ...init }) as unknown as Event)
   }
   return {
+    document,
     container,
+    fire,
     query<T extends Element = Element>(selector: string): T {
       const found = container.querySelector<T>(selector)
       if (found === null) throw new Error(`No element matches '${selector}'`)
@@ -20,13 +22,17 @@ export function createDom(markup = '') {
       return Array.from(container.querySelectorAll<T>(selector))
     },
     click(element: Element): void {
-      dispatch(element, new window.Event('click', { bubbles: true }))
+      fire(element, 'click')
     },
     change(element: Element): void {
-      dispatch(element, new window.Event('change', { bubbles: true }))
+      fire(element, 'change')
     },
     key(element: Element, key: string): void {
-      dispatch(element, new window.KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+      target(element).dispatchEvent(new window.KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }) as unknown as Event)
     }
   }
+}
+
+function target(element: Element): EventTarget {
+  return element
 }

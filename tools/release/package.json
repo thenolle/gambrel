@@ -1,0 +1,11 @@
+{
+  "name": "@gambrel/release-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Builds and publishes the Gambrel packages to npm.",
+  "license": "PolyForm-Strict-1.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

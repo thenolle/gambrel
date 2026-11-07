@@ -3,14 +3,7 @@ export { Alert, AlertDescription, AlertTitle, alertVariants } from './components
 export { AspectRatio } from './components/aspect-ratio.tsx'
 export { Avatar, AvatarFallback, AvatarImage } from './components/avatar.tsx'
 export { Badge, badgeVariants } from './components/badge.tsx'
-export {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from './components/breadcrumb.tsx'
+export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './components/breadcrumb.tsx'
 export { Button, buttonVariants } from './components/button.tsx'
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './components/card.tsx'
 export { Checkbox } from './components/checkbox.tsx'
@@ -33,6 +26,17 @@ export { cn } from './lib/cn.ts'
 export { createPart } from './lib/part.ts'
 export { createControllable } from './lib/state.ts'
 export { variants } from './lib/variants.ts'
+export { AlertDialog, Dialog, Sheet } from './components/dialog.tsx'
+export { DropdownMenu } from './components/dropdown-menu.tsx'
+export { Pagination, paginationRange } from './components/pagination.tsx'
+export { Popover } from './components/popover.tsx'
+export { ScrollArea } from './components/scroll-area.tsx'
+export { Slider } from './components/slider.tsx'
+export { createToasts, dismissToast, toast, Toaster } from './components/toast.tsx'
+export { Tooltip } from './components/tooltip.tsx'
+export { Blockquote, H1, H2, H3, H4, InlineCode, Lead, Muted, P } from './components/typography.tsx'
+export { dismissOutside, renderTrigger } from './lib/overlay.ts'
+
 export type { AccordionItem, AccordionProps } from './components/accordion.tsx'
 export type { AlertProps } from './components/alert.tsx'
 export type { AspectRatioProps } from './components/aspect-ratio.tsx'
@@ -54,3 +58,11 @@ export type { ClassValue } from './lib/cn.ts'
 export type { ControllableOptions } from './lib/state.ts'
 export type { BaseProps } from './lib/types.ts'
 export type { VariantChoices, VariantProps, VariantsConfig } from './lib/variants.ts'
+export type { AlertDialogProps, DialogProps, SheetProps } from './components/dialog.tsx'
+export type { DropdownMenuProps, MenuItem } from './components/dropdown-menu.tsx'
+export type { PaginationProps } from './components/pagination.tsx'
+export type { PopoverProps } from './components/popover.tsx'
+export type { SliderProps } from './components/slider.tsx'
+export type { ToastOptions, ToasterProps } from './components/toast.tsx'
+export type { TooltipProps } from './components/tooltip.tsx'
+export type { Trigger, TriggerProps } from './lib/overlay.ts'

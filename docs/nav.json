@@ -57,6 +57,7 @@
     {
       "title": "Project",
       "pages": [
+        { "title": "Publishing to npm", "path": "publishing", "summary": "Build, verify and publish the packages." },
         { "title": "Limitations and roadmap", "path": "limitations", "summary": "What Gambrel does not do yet." },
         { "title": "Security", "path": "security", "summary": "What is protected, what is your job." },
         { "title": "Working on Gambrel", "path": "development", "summary": "Repository layout, conventions and workflow." },

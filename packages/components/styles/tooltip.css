@@ -1,0 +1,6 @@
+.gb-tooltip { position: relative; display: inline-flex; }
+.gb-tooltip-content { position: absolute; z-index: 60; width: max-content; max-width: 16rem; padding: .375rem .75rem; border-radius: calc(var(--radius) - 2px); background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); font-size: .75rem; line-height: 1.4; pointer-events: none; }
+.gb-tooltip-top { bottom: calc(100% + .375rem); left: 50%; transform: translateX(-50%); }
+.gb-tooltip-bottom { top: calc(100% + .375rem); left: 50%; transform: translateX(-50%); }
+.gb-tooltip-left { right: calc(100% + .375rem); top: 50%; transform: translateY(-50%); }
+.gb-tooltip-right { left: calc(100% + .375rem); top: 50%; transform: translateY(-50%); }

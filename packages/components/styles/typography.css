@@ -1,0 +1,9 @@
+.gb-h1 { margin: 0; font-size: 2.25rem; font-weight: 800; line-height: 1.1; letter-spacing: -.025em; }
+.gb-h2 { margin: 0; padding-bottom: .5rem; border-bottom: 1px solid hsl(var(--border)); font-size: 1.875rem; font-weight: 600; letter-spacing: -.025em; }
+.gb-h3 { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -.02em; }
+.gb-h4 { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -.01em; }
+.gb-p { margin: 0; line-height: 1.75; }
+.gb-lead { margin: 0; font-size: 1.25rem; color: hsl(var(--muted-foreground)); }
+.gb-muted { margin: 0; font-size: .875rem; color: hsl(var(--muted-foreground)); }
+.gb-blockquote { margin: 0; padding-left: 1.5rem; border-left: 2px solid hsl(var(--border)); font-style: italic; }
+.gb-inline-code { padding: .2rem .3rem; border-radius: 4px; background: hsl(var(--muted)); font: 600 .875em ui-monospace, Menlo, Consolas, monospace; }

@@ -1,4 +1,4 @@
-import { signal } from '@gambrel/reactivity'
+import { signal, untrack } from '@gambrel/reactivity'
 
 export interface ControllableOptions<T> {
   /**
@@ -13,16 +13,19 @@ export interface ControllableOptions<T> {
 /**
  * State that works controlled or uncontrolled. `T` must not be a function type.
  * Controlled: `set` only reports through `onChange`. Uncontrolled: `set` also stores the value.
+ * Setting the value the state already has does nothing and reports nothing.
  */
 export function createControllable<T>(options: ControllableOptions<T>): { get: () => T; set: (value: T) => void } {
   const inner = signal(options.defaultValue)
+  const get = (): T => {
+    const controlled = options.value
+    if (controlled === undefined) return inner()
+    return typeof controlled === 'function' ? (controlled as () => T)() : controlled
+  }
   return {
-    get: () => {
-      const controlled = options.value
-      if (controlled === undefined) return inner()
-      return typeof controlled === 'function' ? (controlled as () => T)() : controlled
-    },
+    get,
     set: (next) => {
+      if (Object.is(next, untrack(get))) return
       if (options.value === undefined) inner.set(next)
       options.onChange?.(next)
     }

@@ -283,6 +283,16 @@ describe('interaction', () => {
     dom.change(select)
     expect(seen).toEqual(['b'])
   })
+
+  test('keyboard navigation in Tabs moves real focus', () => {
+    const dom = createDom()
+    mount(dom.container, <Tabs id="f" items={tabItems} />)
+    const [a, , c] = dom.queryAll<HTMLElement>('[role="tab"]')
+    if (a === undefined || c === undefined) throw new Error('Tabs missing')
+    dom.key(a, 'ArrowRight')
+    expect(c.getAttribute('aria-selected')).toBe('true')
+    expect(dom.container.ownerDocument.activeElement).toBe(c)
+  })
 })
 
 describe('hydration', () => {

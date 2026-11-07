@@ -15,6 +15,8 @@ gambrel/
 │   ├── browser/      mount, hydrate, hydrateRoutes
 │   ├── ssr/          document request handler
 │   └── compiler/     discovery, manifests, builds
+│   ├── release-tools/ release tooling
+│   └── components/   shared components
 ├── examples/app/     the example application and its integration tests
 ├── website/          this documentation site
 ├── docs/             the documentation (Markdown)

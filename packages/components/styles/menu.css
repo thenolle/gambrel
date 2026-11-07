@@ -1,0 +1,8 @@
+.gb-menu { min-width: 12rem; padding: .25rem; }
+.gb-menu-item { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: .375rem .5rem; border: 0; border-radius: calc(var(--radius) - 4px); background: transparent; color: inherit; font: inherit; font-size: .875rem; text-align: left; cursor: pointer; }
+.gb-menu-item:hover, .gb-menu-item:focus-visible { outline: none; background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.gb-menu-item:disabled { pointer-events: none; opacity: .5; }
+.gb-menu-item-destructive { color: hsl(var(--destructive)); }
+.gb-menu-shortcut { font-size: .75rem; letter-spacing: .08em; color: hsl(var(--muted-foreground)); }
+.gb-menu-label { padding: .375rem .5rem; font-size: .75rem; font-weight: 600; color: hsl(var(--muted-foreground)); }
+.gb-menu-separator { height: 1px; margin: .25rem -.25rem; background: hsl(var(--border)); }

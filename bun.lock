@@ -99,6 +99,10 @@
       "name": "@gambrel/view",
       "version": "0.1.0",
     },
+    "tools/release": {
+      "name": "@gambrel/release-tools",
+      "version": "0.1.0",
+    },
     "website": {
       "name": "@gambrel/website",
       "version": "0.1.0",
@@ -124,6 +128,8 @@
     "@gambrel/icons": ["@gambrel/icons@workspace:packages/icons"],
 
     "@gambrel/reactivity": ["@gambrel/reactivity@workspace:packages/reactivity"],
+
+    "@gambrel/release-tools": ["@gambrel/release-tools@workspace:tools/release"],
 
     "@gambrel/router": ["@gambrel/router@workspace:packages/router"],
 
