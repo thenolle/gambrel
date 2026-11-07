@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>Gambrel documentation</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#18181b">
   <link rel="stylesheet" href="styles.css">
   <script>
     try {
@@ -23,7 +25,10 @@
     <div class="header-inner">
       <button id="menu" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle navigation"
         aria-controls="sidebar"></button>
-      <a class="logo" href="#/"><span class="logo-mark">G</span><span class="logo-text">Gambrel</span></a>
+      <a class="logo" href="#/" aria-label="Gambrel documentation home">
+        <img class="brand-mark" src="gambrel.svg" width="28" height="28" alt="">
+        <span class="logo-text">Gambrel</span>
+      </a>
       <nav id="quick" class="quick" aria-label="Sections"></nav>
       <div class="spacer"></div>
       <button id="open-search" class="search-button" type="button" aria-label="Search documentation"></button>

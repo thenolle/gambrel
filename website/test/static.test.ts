@@ -16,7 +16,20 @@ describe('the static site', () => {
     const child = Bun.spawn([process.execPath, join(siteRoot, 'scripts', 'build.ts')], { stdout: 'ignore', stderr: 'inherit' })
     expect(await child.exited).toBe(0)
 
-    for (const file of ['index.html', 'styles.css', 'app.js', '.nojekyll', 'docs/nav.json', 'docs/introduction.md']) {
+    for (const file of [
+      'index.html',
+      'styles.css',
+      'app.js',
+      'icons.html',
+      'icons.css',
+      'icon-catalog.js',
+      'icons.json',
+      'gambrel.svg',
+      'favicon.svg',
+      '.nojekyll',
+      'docs/nav.json',
+      'docs/introduction.md'
+    ]) {
       expect((await stat(join(dist, file))).isFile(), file).toBe(true)
     }
 

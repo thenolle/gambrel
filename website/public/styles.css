@@ -138,3 +138,33 @@ mark { padding: 0 .1rem; border-radius: 3px; background: hsl(var(--warning) / .3
 @media (min-width: 801px) { #menu, #overlay { display: none; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media print { .header, .sidebar-wrap, #toc, .pager, .page-actions, .page-foot, #progress, #to-top, .copy { display: none !important; } .shell { display: block; } figure.code { break-inside: avoid; } }
+
+.brand-mark {
+  display: block;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+}
+
+.logo:hover .brand-mark {
+  transform: translateY(-1px);
+}
+
+.logo .brand-mark {
+  transition: transform .15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo:hover .brand-mark {
+    transform: none;
+  }
+}
+
+.brand-mark {
+  filter: brightness(0);
+}
+
+[data-theme='dark'] .brand-mark {
+  filter: brightness(0) invert(1);
+}

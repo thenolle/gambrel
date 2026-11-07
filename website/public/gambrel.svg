@@ -1,0 +1,46 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 32 32"
+  width="32"
+  height="32"
+  fill="currentColor"
+  role="img"
+  aria-label="Gambrel"
+>
+  <path
+    fill-rule="evenodd"
+    d="
+      M16 2.25
+      L22.2 5.65
+      L28.6 17.9
+      L25.4 19.5
+      L24.2 16.5
+      V30.5
+      H7.8
+      V16.5
+      L6.6 19.5
+      L3.4 17.9
+      L9.8 5.65
+      Z
+
+      M13 30.5
+      V23
+      C13 21.34 14.34 20 16 20
+      S19 21.34 19 23
+      V30.5
+      Z
+
+      M9.5 21.25
+      H11.75
+      V23.5
+      H9.5
+      Z
+
+      M20.25 21.25
+      H22.5
+      V23.5
+      H20.25
+      Z
+    "
+  />
+</svg>
