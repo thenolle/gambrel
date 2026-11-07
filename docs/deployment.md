@@ -78,6 +78,14 @@ The documentation in this repository is a static site:
 bun run docs:build
 ```
 
-It writes `website/dist`, which any static host can serve. The pages use hash URLs, so no rewrite rules are needed.
+It writes `website/dist`, a folder of plain files that any static host can serve. The pages use relative URLs and hash routes, so the site works from a sub-path and needs no rewrite rules.
 
-See [Configuration](./configuration.md) for the variables and [Build and development](./build.md) for the build details.
+### GitHub Pages
+
+The workflow in `.github/workflows/docs.yml` builds the site and deploys it whenever `docs/` or `website/` changes on `master`.
+
+1. In the repository, open **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Push to `master`, or run the workflow from the Actions tab.
+
+The site appears at `https://thenolle.github.io/gambrel/`. GitHub Pages is free for public repositories; private repositories need a paid GitHub plan.
