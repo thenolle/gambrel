@@ -103,6 +103,7 @@ export const Folder = createIcon('folder', [['path', { d: 'M4 20h16a2 2 0 0 0 2-
 export const FolderCheck = createIcon('folder-check', [['path', { d: 'M3 7V4h6l3 3h9v13H3V7Z' }], ['path', { d: 'm8 14 3 3 5-6' }]])
 export const FolderOpen = createIcon('folder-open', [['path', { d: 'M3 8V5h6l3 3h9v3M3 8v12h16l3-9H7l-4 9' }]])
 export const FolderPlus = createIcon('folder-plus', [['path', { d: 'M3 7V4h6l3 3h9v13H3V7Z' }], ['path', { d: 'M8 14h8M12 10v8' }]])
+export const Gambrel = createIcon('gambrel', [['path', { d: 'M2.5 14.5 6 7.8 12 3.5l6 4.3 3.5 6.7' }], ['path', { d: 'M5.5 12.5V21h13v-8.5' }], ['path', { d: 'M10 21v-5.5h4V21' }], ['path', { d: 'M8 15h.01M16 15h.01' }]])
 export const Gift = createIcon('gift', [['rect', { x: '2', y: '7', width: '20', height: '5', rx: '1' }], ['path', { d: 'M4 12v10h16V12M12 7v15' }], ['path', { d: 'M12 7C2 8 4-3 12 7c8-10 10 1 0 0Z' }]])
 export const GitBranch = createIcon('git-branch', [['line', { x1: '6', x2: '6', y1: '3', y2: '15' }], ['circle', { cx: '18', cy: '6', r: '3' }], ['circle', { cx: '6', cy: '18', r: '3' }], ['path', { d: 'M18 9a9 9 0 0 1-9 9' }]])
 export const GitCommit = createIcon('git-commit', [['circle', { cx: '12', cy: '12', r: '3' }], ['path', { d: 'M3 12h6' }], ['path', { d: 'M15 12h6' }]])

@@ -102,6 +102,7 @@ export const iconNames = [
   'folder-check',
   'folder-open',
   'folder-plus',
+  'gambrel',
   'gift',
   'git-branch',
   'git-commit',

@@ -108,6 +108,7 @@ export const registry: Readonly<Record<IconName, IconComponent>> = {
   'folder-check': icons.FolderCheck,
   'folder-open': icons.FolderOpen,
   'folder-plus': icons.FolderPlus,
+  'gambrel': icons.Gambrel,
   'gift': icons.Gift,
   'git-branch': icons.GitBranch,
   'git-commit': icons.GitCommit,

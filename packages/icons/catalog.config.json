@@ -56,6 +56,10 @@
     }
   ],
   "overrides": {
+    "gambrel": {
+      "category": "general",
+      "keywords": ["brand", "framework", "roof", "logo"]
+    },
     "search": {
       "category": "navigation",
       "keywords": ["find", "lookup", "magnifier"]
