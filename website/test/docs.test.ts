@@ -43,4 +43,29 @@ describe('documentation content', () => {
       }
     }
   })
+
+  test('internal section links point at existing headings', async () => {
+    const nav = await loadNav()
+    const paths = nav.sections.flatMap((section) => section.pages.map((page) => page.path))
+    const rendered = new Map(
+      await Promise.all(paths.map(async (path) => {
+        const source = await readFile(join(docsRoot, `${path}.md`), 'utf8')
+        return [path, renderMarkdown(source, { docPath: path })] as const
+      }))
+    )
+    const problems: string[] = []
+    for (const [sourcePath, page] of rendered) {
+      for (const match of page.html.matchAll(/href="#\/([^"@]*)@([^"]+)"/g)) {
+        const path = match[1] ?? ''
+        const anchor = match[2] ?? ''
+        const target = rendered.get(path)
+        if (target === undefined) {
+          problems.push(`${sourcePath}: missing page '${path}'`)
+          continue
+        }
+        if (!target.headings.some((heading) => heading.id === anchor)) problems.push(`${sourcePath}: missing heading '${path}@${anchor}'`)
+      }
+    }
+    expect(problems).toEqual([])
+  })
 })

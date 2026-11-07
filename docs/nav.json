@@ -7,7 +7,8 @@
       "pages": [
         { "title": "Introduction", "path": "introduction", "summary": "What Gambrel is and how the pieces fit." },
         { "title": "Getting started", "path": "getting-started", "summary": "Install, run the example and add your first routes." },
-        { "title": "Tutorial: a bookshelf", "path": "tutorial", "summary": "Build a small full-stack app step by step." }
+        { "title": "Tutorial: a bookshelf", "path": "tutorial", "summary": "Build a small full-stack app step by step." },
+        { "title": "Rendering examples", "path": "examples", "summary": "A complete task board in SSR, CSR and server-only HTML." }
       ]
     },
     {

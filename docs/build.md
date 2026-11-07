@@ -1,45 +1,150 @@
-# Build and development workflow
+# Build output
 
-## Commands (from the repository root)
+Gambrel builds server and browser code from separate entry graphs and records the resulting artifacts.
 
-| Command             | What it does                                                                                                                                    |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun install`       | Installs and links the workspace.                                                                                                               |
-| `bun run typecheck` | Regenerates route manifests, then type-checks every package and the example.                                                                    |
-| `bun test`          | Runs all tests, including the build and end-to-end tests.                                                                                       |
-| `bun run build`     | Production build of the example into `examples/app/dist`.                                                                                       |
-| `bun run start`     | Runs the built server (`NODE_ENV=production`). Build first.                                                                                     |
-| `bun run dev`       | Builds the client in development mode, watches `src/` to rebuild it, restarts the server on server-side changes. Reload the page after changes. It sets `NODE_ENV=development`; every other value, including unset, behaves as production for error detail. |
+## Programmatic build
 
-## Configuration (`gambrel.config.ts`, optional)
+```ts
+import { buildApp, loadConfig } from '@gambrel/compiler'
 
-`routesDir` (`src/routes`), `serverEntry` (`src/server.ts`), `clientEntry` (`src/client.ts`), `outDir` (`dist`), `sourcemap` (true), `minify` (true in production). Unknown keys are errors. The runtime target is Bun.
+const root = process.cwd()
 
-## Output
+const result = await buildApp({
+  root,
+  config: await loadConfig(root),
+  mode: 'production'
+})
+
+console.log(result.outputs)
+```
+
+Your package scripts can call this build script. Script names belong to the application, not to the runtime itself.
+
+## Configuration
+
+```ts title="gambrel.config.ts"
+import { defineConfig } from '@gambrel/compiler'
+
+export default defineConfig({
+  routesDir: 'src/routes',
+  serverEntry: 'src/server.ts',
+  clientEntry: 'src/client.ts',
+  outDir: 'dist'
+})
+```
+
+Additional options control source maps and minification. See [Configuration](./configuration.md).
+
+## Generated route modules
+
+Before bundling, route discovery writes:
+
+```text
+.gambrel/
+├── routes.ts
+├── manifest.client.ts
+└── manifest.server.ts
+```
+
+These files are generated from route sources and should not be edited manually.
+
+The client manifest imports components. The server manifest imports components and server hook modules.
+
+## Production artifacts
+
+With the default client entry name, the output is:
 
 ```text
 dist/
 ├── client/
-│   ├── client.js        browser entry, served at /assets/client.js
+│   ├── client.js
 │   └── client.js.map
 ├── server/
-│   ├── index.js         production server entry
+│   ├── index.js
 │   └── index.js.map
 └── manifest/
-    ├── build.json       mode, target, entries and file lists
-    └── routes.json      route records (id, pattern, layouts)
+    ├── build.json
+    └── routes.json
 ```
 
-`buildApp` empties `outDir` first and refuses an `outDir` that is the project root or contains it. Output is deterministic: no timestamps, sorted file lists.
+Source-map files depend on configuration. Additional imported assets can add output files.
 
-## Server code never reaches the browser
+The browser entry filename follows the configured client entry's base name. The server entry is emitted as `server/index.js`.
 
-The browser and server bundles are built from separate entry graphs. The client build fails, naming the importer, if its graph reaches a `*.server.ts` file, `@gambrel/ssr`, `@gambrel/bun`, `@gambrel/core`, `@gambrel/compiler`, or a `bun:` or `node:` module. This does not rely on tree-shaking.
+`build.json` records the build mode, runtime target, entry files and output lists. `routes.json` records route metadata.
 
-## Static assets (`@gambrel/bun`)
+A full build clears the configured output directory first. Do not point it at a directory containing application source or data.
 
-`staticFiles({ directory, prefix })` is a core middleware. Under the prefix, GET and HEAD are answered from the directory; a missing file, a directory or a path outside it is a plain-text 404 (never the HTML document handler). Responses use `cache-control: no-cache`.
+## Browser build boundary
 
-## Development limitations
+The client build rejects imports of:
 
-No HMR. Adding or removing route files regenerates the manifests and restarts the server through `bun --watch`; the browser must be reloaded manually.
+- Recognized `*.server` modules
+- `@gambrel/core`
+- `@gambrel/bun`
+- `@gambrel/ssr`
+- `@gambrel/compiler`
+- `node:` and `bun:` modules
+
+This prevents those import graphs from entering the browser bundle. It does not inspect arbitrary application objects for secrets.
+
+Every value returned by a loader is public data once embedded in the page.
+
+## Serving browser assets
+
+The server must serve the emitted browser directory at the URL used in its document handler:
+
+```ts
+app.use(staticFiles({
+  directory: 'dist/client',
+  prefix: '/assets'
+}))
+```
+
+```ts
+createDocumentHandler({
+  routes,
+  components,
+  hooks,
+  entry: '/assets/client.js'
+})
+```
+
+The file path and script URL must agree.
+
+A missing asset should return a plain-text 404, not fall through to a document response.
+
+## Development rebuilds
+
+`buildClient` regenerates manifests and builds only the browser output.
+
+```ts
+await buildClient({
+  root,
+  config,
+  mode: 'development'
+})
+```
+
+Applications can invoke it from a watcher. Watch behavior is provided by the application script; there is no universal compiler-owned HMR server.
+
+The repository example uses a watcher and Bun's process restart behavior. Restart that development command after adding or removing route files if the route table is not refreshed. Reload the browser after a successful client rebuild.
+
+## Repository commands
+
+In the Gambrel repository:
+
+| Command              | Application                                  |
+| -------------------- | -------------------------------------------- |
+| `bun run dev`        | File-routing example in development          |
+| `bun run build`      | Production build of the file-routing example |
+| `bun run start`      | Start that built example                     |
+| `bun run docs:build` | Build the static documentation website       |
+
+The rendering-mode examples have their own commands. See [Rendering examples](./examples.md).
+
+## Related
+
+- [Compiler reference](./compiler.md)
+- [Application structure](./development.md)
+- [Deployment](./deployment.md)
