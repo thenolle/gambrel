@@ -22,9 +22,19 @@ export function createSiteApp(): App {
     .use(staticFiles({ directory: publicDir, prefix: '/' }))
 }
 
+function isAddressInUse(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'EADDRINUSE'
+}
+
 if (import.meta.main) {
   await bundleApp(false)
   const port = Number(process.env['DOCS_PORT'] ?? 4000)
-  const server = serve(createSiteApp(), { port, development: true })
-  console.log(`Documentation at ${server.url.href}`)
+  try {
+    const server = serve(createSiteApp(), { port, development: true })
+    console.log(`Documentation at ${server.url.href}`)
+  } catch (error) {
+    if (!isAddressInUse(error)) throw error
+    console.error(`Port ${port} is already in use. Stop the other process or set DOCS_PORT to another port.`)
+    process.exit(1)
+  }
 }
