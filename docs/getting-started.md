@@ -1,99 +1,109 @@
 # Getting started
 
-This page takes you from a clean checkout to your own routes with server-loaded data and an interactive component.
+Run a Gambrel application, explore the rendering modes, and create a typed page.
 
 ## Requirements
 
-- [Bun](https://bun.sh), a recent version (developed with 1.4.4-canary.1 on Windows)
-- Git
+Bun is the server runtime and workspace package manager.
 
-## Get the code and run it
+The examples use TypeScript and JSX. Gambrel has its own JSX runtime; it does not use React.
+
+## Run the file-routing example
 
 ```bash
 git clone [https://github.com/thenolle/gambrel.git](https://github.com/thenolle/gambrel.git)
 cd gambrel
 bun install
-bun run typecheck
-bun test
+bun run build
+bun run start
 ```
 
-> [!NOTE]
-> Gambrel is licensed under the PolyForm Strict License 1.0.0. You may run it and study it for noncommercial purposes. You may not distribute it or make changes you share.
+Open `http://localhost:3000`.
 
-Start the example:
+The example includes static pages, dynamic users, nested layouts, server loaders, a guard and browser interaction.
+
+## Explore the rendering modes
+
+From the repository root:
 
 ```bash
-bun run build
-bun run start      # http://localhost:3000
+bun run --filter @gambrel/example-modes ssr
 ```
 
-| Command             | What it does                                                               |
-| ------------------- | -------------------------------------------------------------------------- |
-| `bun run typecheck` | Regenerates the example's route manifests, then type-checks every package. |
-| `bun test`          | Runs all tests, including the build and end-to-end tests.                  |
-| `bun run build`     | Builds the example into `examples/app/dist`.                               |
-| `bun run start`     | Runs the built server with `NODE_ENV=production`. Build first.             |
-| `bun run dev`       | Development server that rebuilds the browser bundle when files change.     |
-| `bun run docs`      | Serves this documentation site on port 4000.                               |
+Open `http://localhost:3101`.
 
-In development, reload the page after a change. There is no hot module replacement.
+The other modes are:
 
-## Tour of the example
-
-```text
-examples/app/
-├── gambrel.config.ts        optional configuration
-├── scripts/                 generate, build and dev scripts
-└── src/
-    ├── server.ts            starts the server
-    ├── app.ts               combines core, static files and the document handler
-    ├── client.ts            the browser entry: hydrateRoutes
-    ├── components/          shared, browser-safe components
-    ├── data/                server-only data (never imported by a page)
-    └── routes/
-        ├── layout.tsx       root layout: the whole HTML document
-        ├── page.tsx         /
-        ├── about/page.tsx   /about
-        ├── admin/           /admin, protected by a guard
-        ├── docs/[...slug]/  /docs/anything/below
-        └── users/           /users and /users/:id, with a nested layout
+```bash
+bun run --filter @gambrel/example-modes csr
+bun run --filter @gambrel/example-modes server
 ```
 
-## Add your first page
+They use ports 3102 and 3103.
 
-Create `examples/app/src/routes/hello/page.tsx`:
+Each command builds and starts its application. Each mode stores task data separately.
 
-```tsx title="src/routes/hello/page.tsx"
+## Install individual packages
+
+Choose packages for the layer you need:
+
+```bash
+bun add @gambrel/core @gambrel/bun
+bun add @gambrel/view @gambrel/reactivity @gambrel/browser
+bun add @gambrel/router @gambrel/ssr @gambrel/compiler
+```
+
+For the component and icon libraries:
+
+```bash
+bun add @gambrel/components @gambrel/icons
+```
+
+## Configure JSX
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@gambrel/view"
+  }
+}
+```
+
+TSX files can also declare the runtime explicitly:
+
+```tsx
+/** @jsxImportSource @gambrel/view */
+```
+
+## Create a page
+
+```tsx title="src/routes/about/page.tsx"
 /** @jsxImportSource @gambrel/view */
 import type { Child } from '@gambrel/view'
 
-export default function HelloPage(): Child {
+export default function AboutPage(): Child {
   return (
     <section>
-      <h1>Hello</h1>
-      <p>This page is rendered on the server and hydrated in the browser.</p>
+      <h1>About</h1>
+      <p>This is a Gambrel page.</p>
     </section>
   )
 }
 ```
 
-Run `bun run dev` and open `http://localhost:3000/hello`. The root layout already wraps it.
+Run the application's generation and build commands after adding routes.
 
-> [!TIP]
-> Put the `/** @jsxImportSource @gambrel/view */` line at the top of every `.tsx` file. The bundler and the test runner both read it reliably.
-
-If the new page returns 404, stop `bun run dev` and start it again so the route manifests are regenerated.
-
-## Add a dynamic route with a loader
-
-Create two files in `src/routes/hello/[name]/`. The folder name `[name]` makes a dynamic segment, so `/hello/Ada` and `/hello/Grace` both match.
+## Add typed server data
 
 ```ts title="src/routes/hello/[name]/page.server.ts"
-import type { Context } from '@gambrel/core'
 import type { Loader, ParamsOf } from '@gambrel/router'
 
-export const loader: Loader<ParamsOf<'/hello/[name]'>, { greeting: string }, Context> = (ctx) => ({
-  greeting: `Hello, ${ctx.params.name}!`
+export const loader: Loader<
+  ParamsOf<'/hello/[name]'>,
+  { greeting: string }
+> = ({ params }) => ({
+  greeting: `Hello, ${params.name}!`
 })
 ```
 
@@ -103,70 +113,19 @@ import type { LoaderData, PageProps, ParamsOf } from '@gambrel/router'
 import type { Child } from '@gambrel/view'
 import type { loader } from './page.server.ts'
 
-export default function GreetingPage(
+export default function HelloPage(
   props: PageProps<ParamsOf<'/hello/[name]'>, LoaderData<typeof loader>>
 ): Child {
   return <h1>{props.data.greeting}</h1>
 }
 ```
 
-Two things to notice:
+The loader runs on the server. The component receives the same initial data during hydration.
 
-- `props.params.name` is a `string` and `props.data.greeting` is typed, both inferred from the route pattern and the loader.
-- The page imports the loader with `import type`. That import is erased, so the server file never reaches the browser.
+## Next
 
-## Make it interactive
-
-Components can use signals. Reuse the example's counter on your page:
-
-```tsx title="src/routes/hello/page.tsx"
-/** @jsxImportSource @gambrel/view */
-import type { Child } from '@gambrel/view'
-import { Counter } from '../../components/counter.tsx'
-
-export default function HelloPage(): Child {
-  return (
-    <section>
-      <h1>Hello</h1>
-      <Counter />
-    </section>
-  )
-}
-```
-
-The server renders `Clicked 0 times`. The browser keeps that HTML, attaches the click handler, and updates the number in place.
-
-## Protect a route with a guard
-
-A guard runs before any loader. Add `page.server.ts` next to a page and export `beforeLoad`:
-
-```ts title="src/routes/admin/page.server.ts"
-import type { Context } from '@gambrel/core'
-import { redirect, type Guard, type ParamsOf } from '@gambrel/router'
-
-export const beforeLoad: Guard<ParamsOf<'/admin'>, Context> = (ctx) => {
-  if (ctx.context.request.headers.get('x-demo-user') === null) return redirect('/')
-  return undefined
-}
-```
-
-Try it:
-
-```bash
-curl -i http://localhost:3000/admin
-curl -i -H 'x-demo-user: ada' http://localhost:3000/admin
-```
-
-The first request is redirected to `/`. The second renders the page.
-
-## Common problems
-
-| Symptom                                                           | Cause and fix                                                                                             |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| A new route returns 404                                           | The route manifests were not regenerated. Restart `bun run dev`.                                          |
-| `unsupported route file` when generating                          | Route files must be exactly `page.tsx`, `layout.tsx`, `page.server.ts` or `layout.server.ts`.             |
-| The build says `Server-only module ... would ship to the browser` | A `page.tsx` or `layout.tsx` imports server code. Move that code into `page.server.ts`.                   |
-| The page works but nothing is interactive                         | The browser script failed to load or hydration threw. Open the browser console.                           |
-| `The root layout must render a <body>`                            | The server injects the hydration scripts before `</body>`. Make sure your root layout renders a `<body>`. |
-
-See [Build and development](./build.md) for the full build output and [Router](./router.md) for patterns and resolution order.
+- [Tutorial](./tutorial.md)
+- [Loaders](./loaders.md)
+- [Interactivity](./interactivity.md)
+- [Configuration](./configuration.md)
+- [License](./license.md)

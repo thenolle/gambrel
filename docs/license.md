@@ -1,25 +1,19 @@
 # License
 
-Gambrel is licensed under the **PolyForm Strict License 1.0.0**. The `LICENSE` file in the repository root is the legal text. This page is a plain-language summary and is not legal advice. If the two ever differ, `LICENSE` wins.
+Gambrel is distributed under PolyForm Strict License 1.0.0.
 
-## In short
+The repository's LICENSE file is the legal text. This page identifies the license; it does not replace or expand its permissions.
 
-| You may                                                   | You may not                           |
-| --------------------------------------------------------- | ------------------------------------- |
-| Read and study the source                                 | Distribute copies of the software     |
-| Run it for noncommercial purposes                         | Make changes or new works based on it |
-| Use it for personal learning, research and hobby projects | Use it for commercial purposes        |
+## Read the terms
 
-Anything the license does not clearly allow is reserved to the author.
+[PolyForm Strict License 1.0.0](https://polyformproject.org/licenses/strict/1.0.0)
 
-## What "noncommercial" means here
+The license defines permitted purposes and excludes distribution and making changes or new works based on the software from its copyright grant.
 
-Use is noncommercial when it is not intended to make money or provide a business advantage. Learning, studying, personal projects and academic research are noncommercial. Running it inside a company, a paid product or a paid service is not.
+Do not assume that access to the source or availability on npm provides an open-source license, a commercial-use license, or permission to redistribute an application containing the software.
 
-## Why this license
+## Additional permissions
 
-The goal is to let people read and try the framework while keeping it from being copied, modified and redistributed as someone else's work. The license text is the standard one published by the PolyForm Project: https://polyformproject.org/licenses/strict/1.0.0
+For rights not granted by the license, contact the maintainer through the [repository](https://github.com/thenolle/gambrel).
 
-## Asking for more
-
-If you need rights the license does not give you, for example commercial use or permission to contribute changes, contact the maintainer through GitHub ([@thenolle](https://github.com/thenolle)) and ask.
+Third-party tools used to develop or test Gambrel retain their own licenses.

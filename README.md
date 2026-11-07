@@ -1,98 +1,159 @@
 # Gambrel
 
-A small TypeScript-first, JSX-based full-stack web framework for Bun: file-system routing with nested layouts, typed loaders and guards, server-side rendering, and browser hydration.
+TypeScript, JSX, and explicit server–browser boundaries.
 
-> **Prototype.** Bun only. Packages are not published. Licensed under the **PolyForm Strict License 1.0.0**: noncommercial use only, no distribution, no modification. See [LICENSE](./LICENSE).
+Gambrel is a modular web framework for Bun. Build server-rendered applications with hydration, browser-rendered interfaces, or HTML applications that work without client JavaScript.
 
-## Features
+[Documentation](https://thenolle.github.io/gambrel/) · [Icon catalog](https://thenolle.github.io/gambrel/icons.html) · [Source](https://github.com/thenolle/gambrel)
 
-- Routes are files: `page.tsx`, `layout.tsx`, with `[id]` and `[...slug]` segments and `(groups)`
-- Typed params and loader data, flowing from the route pattern into your components
-- Guards and loaders that run only on the server, with redirects, denials and 404s as explicit outcomes
-- Server-rendered HTML that the browser hydrates in place, with mismatches reported and repaired locally
-- Signals and effects for interactive components
-- A production build with separate server and browser bundles, and a check that server code never reaches the browser
-- Safe by default: escaped output, JSON-only data, safely embedded payload
+## What you can build
 
-## Quick start
+- Server-rendered pages with nested layouts, route loaders, and guards
+- Hydrated interfaces that reuse server-rendered HTML
+- Browser-mounted applications using signals and components
+- Server-only applications using native forms and redirects
+- HTTP APIs with a small application layer
+- Interfaces built from themeable components and SVG icons
 
-```bash
-git clone [https://github.com/thenolle/gambrel.git](https://github.com/thenolle/gambrel.git)
-cd gambrel
-bun install
-bun run typecheck
-bun test
-bun run build
-bun run start      # http://localhost:3000
-```
+## A typed route
 
-Development with automatic browser-bundle rebuilds: `bun run dev` (reload the page after a change).
+Load data on the server:
 
-## Documentation
-
-Read the documentation in a searchable site, rendered from the Markdown in [`docs/`](./docs):
-
-```bash
-bun run docs       # http://localhost:4000
-bun run docs:build # static site in website/dist
-```
-
-| Section    | Pages                                                                                                                                                                                                                                                                                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Start here | [Introduction](./docs/introduction.md) · [Getting started](./docs/getting-started.md) · [Tutorial: a bookshelf](./docs/tutorial.md)                                                                                                                                                                                                                                             |
-| Concepts   | [Routing and layouts](./docs/routing.md) · [The server/client boundary](./docs/server-client-boundary.md) · [SSR and hydration](./docs/ssr-hydration.md) · [Architecture](./docs/architecture.md)                                                                                                                                                                               |
-| Guides     | [Loaders](./docs/loaders.md) · [Guards and redirects](./docs/guards.md) · [Errors and 404 pages](./docs/error-pages.md) · [Interactivity](./docs/interactivity.md) · [Configuration](./docs/configuration.md) · [Deployment](./docs/deployment.md) · [Testing your app](./docs/testing.md) · [Troubleshooting](./docs/troubleshooting.md)                                       |
-| Libraries  | [@gambrel/icons](./docs/icons.md) · [@gambrel/components](./docs/components.md) · [Form components](./docs/component-forms.md) · [Application UI](./docs/component-application.md)                                                                                                                                                                                              |
-| Reference  | [Cheat sheet](./docs/cheatsheet.md) · [@gambrel/core](./docs/core.md) · [@gambrel/bun](./docs/bun.md) · [@gambrel/view](./docs/view.md) · [@gambrel/reactivity](./docs/reactivity.md) · [@gambrel/browser](./docs/browser.md) · [@gambrel/router](./docs/router.md) · [@gambrel/ssr](./docs/ssr.md) · [@gambrel/compiler](./docs/compiler.md) · [Build output](./docs/build.md) |
-| Project    | [Publishing to npm](./docs/publishing.md) · [Limitations and roadmap](./docs/limitations.md) · [Security](./docs/security.md) · [Working on Gambrel](./docs/development.md) · [License](./docs/license.md)                                                                                                                                                                      |
-
-## A minimal example
-
-```tsx
-// src/routes/hello/[name]/page.server.ts
-import type { Context } from '@gambrel/core'
+```ts
 import type { Loader, ParamsOf } from '@gambrel/router'
 
-export const loader: Loader<ParamsOf<'/hello/[name]'>, { greeting: string }, Context> = (ctx) => ({
-  greeting: `Hello, ${ctx.params.name}!`
+export const loader: Loader<
+  ParamsOf<'/hello/[name]'>,
+  { greeting: string }
+> = ({ params }) => ({
+  greeting: `Hello, ${params.name}!`
 })
 ```
 
+Render the page:
+
 ```tsx
-// src/routes/hello/[name]/page.tsx
 /** @jsxImportSource @gambrel/view */
 import type { LoaderData, PageProps, ParamsOf } from '@gambrel/router'
 import type { Child } from '@gambrel/view'
 import type { loader } from './page.server.ts'
 
-export default function GreetingPage(props: PageProps<ParamsOf<'/hello/[name]'>, LoaderData<typeof loader>>): Child {
+export default function HelloPage(
+  props: PageProps<ParamsOf<'/hello/[name]'>, LoaderData<typeof loader>>
+): Child {
   return <h1>{props.data.greeting}</h1>
 }
 ```
 
-`/hello/Ada` is rendered on the server, hydrated in the browser, and the loader never ships to the client.
+The server loader lives in `page.server.ts`. The component lives in `page.tsx`. Its type-only import does not add the server module to the browser bundle.
+
+## Try the examples
+
+```bash
+git clone [https://github.com/thenolle/gambrel.git](https://github.com/thenolle/gambrel.git)
+cd gambrel
+bun install
+```
+
+The file-routing example:
+
+```bash
+bun run build
+bun run start
+```
+
+The complete task-board examples:
+
+```bash
+bun run --filter @gambrel/example-modes ssr
+bun run --filter @gambrel/example-modes csr
+bun run --filter @gambrel/example-modes server
+```
+
+| Mode               | Default address         | Initial rendering                                    |
+| ------------------ | ----------------------- | ---------------------------------------------------- |
+| SSR with hydration | `http://localhost:3101` | Task content is rendered on the server and hydrated  |
+| CSR                | `http://localhost:3102` | The browser mounts the interface and loads its data  |
+| Server-only HTML   | `http://localhost:3103` | Native forms and server rendering; no browser bundle |
+
+Each task-board mode uses a separate JSON data file. The examples are single-user, single-process applications.
 
 ## Packages
 
-| Package               | Responsibility                                                                      |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| `@gambrel/core`       | Server application: routes, context, middleware, responses                          |
-| `@gambrel/bun`        | `Bun.serve` adapter and static files                                                |
-| `@gambrel/view`       | JSX runtime and server renderer                                                     |
-| `@gambrel/icons`      | Icon components; depends on `@gambrel/view`                                         |
-| `@gambrel/reactivity` | Signals, effects, ownership                                                         |
-| `@gambrel/components` | Components; depends on `@gambrel/view`, `@gambrel/reactivity`, and `@gambrel/icons` |
-| `@gambrel/router`     | Matching, resolution, hydration payload                                             |
-| `@gambrel/browser`    | Mount, hydrate, `hydrateRoutes`                                                     |
-| `@gambrel/ssr`        | Document request handler                                                            |
-| `@gambrel/compiler`   | Route discovery, manifests, builds                                                  |
+| Package               | Purpose                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| `@gambrel/core`       | HTTP application, middleware, routing, and response helpers  |
+| `@gambrel/bun`        | Bun server adapter and static files                          |
+| `@gambrel/view`       | JSX runtime, element types, and HTML rendering               |
+| `@gambrel/reactivity` | Signals, effects, batching, and ownership                    |
+| `@gambrel/router`     | Route matching, loaders, guards, layouts, and hydration data |
+| `@gambrel/browser`    | Browser mounting and hydration                               |
+| `@gambrel/ssr`        | Document request handling                                    |
+| `@gambrel/compiler`   | File-route discovery, manifests, and application builds      |
+| `@gambrel/components` | Themeable UI components with plain CSS                       |
+| `@gambrel/icons`      | SVG icon components and a searchable catalog                 |
 
-See [Architecture](./docs/architecture.md) for the dependency direction.
+Packages use ESM. The server runtime is Bun.
 
-## Limitations
+## Components and icons
 
-Bun only, no client-side navigation, no hot module replacement, one browser bundle, synchronous route components. Hydration is covered by automated tests in happy-dom; confirm in a real browser as described in [Testing your app](./docs/testing.md). Full list: [Limitations and roadmap](./docs/limitations.md).
+```tsx
+/** @jsxImportSource @gambrel/view */
+import { Button } from '@gambrel/components'
+import { Plus } from '@gambrel/icons'
+
+export function AddButton() {
+  return (
+    <Button onClick={() => console.log('Add')}>
+      <Plus size={16} />
+      Add item
+    </Button>
+  )
+}
+```
+
+Load `@gambrel/components/styles.css` once in your application. The stylesheet uses `gb-*` classes and CSS custom properties; it does not require Tailwind.
+
+## Documentation
+
+- [Getting started](https://thenolle.github.io/gambrel/#/getting-started)
+- [Routing and layouts](https://thenolle.github.io/gambrel/#/routing)
+- [Server–client boundary](https://thenolle.github.io/gambrel/#/server-client-boundary)
+- [SSR and hydration](https://thenolle.github.io/gambrel/#/ssr-hydration)
+- [Components](https://thenolle.github.io/gambrel/#/components)
+- [Icons](https://thenolle.github.io/gambrel/#/icons)
+
+Run the documentation locally:
+
+```bash
+bun run docs
+```
+
+Build a static copy:
+
+```bash
+bun run docs:build
+```
+
+## Development checks
+
+```bash
+bun run typecheck
+bun test
+```
+
+The repository includes package tests, application integration tests, production-build checks, and isolated packed-package consumer verification.
+
+## Compatibility
+
+Gambrel uses its own component and JSX runtime. React components are not interchangeable with Gambrel components.
+
+Route components are synchronous. Links perform document navigation. Dynamic child regions replace their contents when updated; they do not provide keyed reconciliation.
 
 ## License
 
-Licensed under the [PolyForm Strict License 1.0.0](https://polyformproject.org/licenses/strict/1.0.0): you may run and study the software for noncommercial purposes; you may not distribute it or make changes or new works based on it. See [LICENSE](./LICENSE) and [License](./docs/license.md).
+PolyForm Strict License 1.0.0.
+
+Use, modification, redistribution, and application deployment must comply with the license. Do not assume an open-source or commercial-use grant.
+
+Read [LICENSE](./LICENSE) before adopting or distributing Gambrel. For rights not granted there, contact the maintainer through the repository.

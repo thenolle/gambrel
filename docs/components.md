@@ -24,15 +24,31 @@ export default function Page() {
 }
 ```
 
-Load the stylesheet once in your root layout. `@gambrel/components/styles.css` is a normal file, so serve it with `staticFiles` or place its content in a `<style>` tag:
+## Load the stylesheet
+
+The package exports `@gambrel/components/styles.css`.
+
+Copy it to your application's public output during the build:
 
 ```ts
-app.use(staticFiles({ directory: 'node_modules/@gambrel/components/src', prefix: '/components' }))
+import { copyFile, mkdir } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
+
+await mkdir('dist/client', { recursive: true })
+
+await copyFile(
+  fileURLToPath(import.meta.resolve('@gambrel/components/styles.css')),
+  'dist/client/components.css'
+)
 ```
 
-```tsx
-<link rel="stylesheet" href="/components/styles.css" />
+Serve that public directory under `/assets` and link the stylesheet once:
+
+```html
+<link rel="stylesheet" href="/assets/components.css">
 ```
+
+Do not serve the whole package directory merely to expose one stylesheet.
 
 ## Theming
 

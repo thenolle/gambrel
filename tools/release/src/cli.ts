@@ -2,7 +2,7 @@ import { cp, mkdir, readdir, readFile, rm, stat, symlink, writeFile } from 'node
 import { join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { pathToFileURL } from 'node:url'
-import { checkManifest, importsTypeScriptSource, isSemver, readmeFor, rewriteDeclarationSpecifiers, rewriteManifest, sourceEntries, topologicalOrder, type PackageManifest, type WorkspacePackage } from './lib.ts'
+import { checkManifest, importsTypeScriptSource, isSemver, rewriteDeclarationSpecifiers, rewriteManifest, sourceEntries, topologicalOrder, type PackageManifest, type WorkspacePackage } from './lib.ts'
 import { PUBLIC_PACKAGES, UNIVERSAL_PACKAGES } from './packages.ts'
 
 const root = join(import.meta.dir, '..', '..', '..')
@@ -132,7 +132,9 @@ async function buildPackage(pkg: WorkspacePackage, version: string, builtBefore:
   for (const asset of assets) await cp(join(pkg.path, asset.file), join(stage, 'dist', asset.name))
   const manifest = rewriteManifest(pkg.manifest, { version, dir: pkg.dir, publishNames })
   await writeFile(join(stage, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
-  await writeFile(join(stage, 'README.md'), readmeFor(pkg.manifest), 'utf8')
+  const readme = await readFile(join(pkg.path, 'README.md'), 'utf8')
+  if (!readme.startsWith(`# ${pkg.manifest.name}\n`)) throw new Error(`${pkg.manifest.name}: README.md must start with '# ${pkg.manifest.name}'`)
+  await writeFile(join(stage, 'README.md'), readme, 'utf8')
   await cp(join(root, 'LICENSE'), join(stage, 'LICENSE'))
   console.log(`  built ${pkg.manifest.name}@${version}`)
 }
