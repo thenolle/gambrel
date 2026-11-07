@@ -1,4 +1,4 @@
-.gb-button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border: 1px solid transparent; border-radius: calc(var(--radius) - 2px); font: 500 .875rem/1 inherit; font-family: inherit; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
+.gb-button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border: 1px solid transparent; border-radius: calc(var(--radius) - 2px); font-family: inherit; font-size: .875rem; font-weight: 500; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
 .gb-button:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
 .gb-button:disabled, .gb-button[aria-disabled='true'] { pointer-events: none; opacity: .5; }
 .gb-button svg { flex: none; }
