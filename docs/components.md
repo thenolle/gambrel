@@ -4,6 +4,8 @@ Accessible, themeable UI components in the style of shadcn/ui. They are plain fu
 
 ## Use them
 
+For linked fields, password/search/number inputs, uploads and a complete form example, see [Form components](./component-forms.md).
+
 ```tsx
 /** @jsxImportSource @gambrel/view */
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@gambrel/components'
