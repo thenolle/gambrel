@@ -3,35 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Gambrel documentation</title>
   <link rel="stylesheet" href="styles.css">
   <script>
     try {
-      var saved = localStorage.getItem('gambrel-docs-theme')
-      document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      var choice = localStorage.getItem('gambrel-docs-theme')
+      var dark = choice === 'dark' || ((choice === null || choice === 'system') && matchMedia('(prefers-color-scheme: dark)').matches)
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light'
     } catch (error) {}
   </script>
 </head>
-<body>
+<body data-view="doc">
   <a class="skip" href="#content">Skip to content</a>
-  <header class="topbar">
-    <button id="menu" class="icon" type="button" aria-label="Toggle navigation" aria-controls="sidebar">Menu</button>
-    <a class="brand" href="#/">Gambrel <span>docs</span></a>
-    <button id="open-search" class="search-trigger" type="button">Search the documentation <kbd>/</kbd></button>
-    <a id="repo" class="icon" href="https://github.com/thenolle/gambrel" target="_blank" rel="noopener noreferrer">GitHub</a>
-    <button id="theme" class="icon" type="button" aria-label="Toggle color theme">Dark</button>
+  <div id="progress" aria-hidden="true"></div>
+  <header class="header">
+    <div class="header-inner">
+      <button id="menu" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle navigation" aria-controls="sidebar"></button>
+      <a class="logo" href="#/"><span class="logo-mark">G</span><span class="logo-text">Gambrel</span></a>
+      <nav id="quick" class="quick" aria-label="Sections"></nav>
+      <div class="spacer"></div>
+      <button id="open-search" class="search-button" type="button" aria-label="Search documentation"></button>
+      <a id="repo" class="btn btn-ghost btn-sm" href="https://github.com/thenolle/gambrel" target="_blank" rel="noopener noreferrer"></a>
+      <div class="menu-wrap">
+        <button id="theme" class="btn btn-ghost btn-icon" type="button" aria-label="Change theme" aria-haspopup="menu" aria-expanded="false"></button>
+        <div id="theme-menu" class="popover" role="menu" hidden></div>
+      </div>
+    </div>
   </header>
-  <div class="layout">
-    <nav id="sidebar" aria-label="Documentation"></nav>
-    <main id="content" tabindex="-1"><p class="loading">Loading documentation...</p></main>
+  <div class="shell">
+    <aside class="sidebar-wrap"><nav id="sidebar" aria-label="Documentation"></nav></aside>
+    <main id="content" tabindex="-1"><div class="doc"><p class="muted">Loading documentation...</p></div></main>
     <aside id="toc" aria-label="On this page"></aside>
   </div>
-  <dialog id="search" aria-label="Search the documentation">
-    <div class="search-box">
-      <input id="search-input" type="search" placeholder="Search the documentation" autocomplete="off" aria-label="Search the documentation">
-      <div id="search-results" role="listbox"></div>
-    </div>
-  </dialog>
+  <div id="overlay" hidden></div>
+  <button id="to-top" class="btn btn-outline btn-icon" type="button" aria-label="Back to top" hidden></button>
+  <dialog id="search" aria-label="Search documentation"></dialog>
+  <dialog id="shortcuts" aria-label="Keyboard shortcuts"></dialog>
   <script type="module" src="app.js"></script>
 </body>
 </html>
