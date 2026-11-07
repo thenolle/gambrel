@@ -1,6 +1,6 @@
 {
   "name": "@gambrel/view",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "PolyForm-Strict-1.0.0",
   "description": "VNodes, JSX runtime, server renderer",
   "private": true,
