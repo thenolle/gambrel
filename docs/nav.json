@@ -59,10 +59,10 @@
     {
       "title": "Project",
       "pages": [
-        { "title": "Publishing to npm", "path": "publishing", "summary": "Build, verify and publish the packages." },
-        { "title": "Limitations and roadmap", "path": "limitations", "summary": "What Gambrel does not do yet." },
+        { "title": "Installing packages", "path": "publishing", "summary": "Choose packages, understand exports and keep runtime boundaries explicit." },
+        { "title": "Compatibility", "path": "limitations", "summary": "Runtime, rendering and component behavior." },
         { "title": "Security", "path": "security", "summary": "What is protected, what is your job." },
-        { "title": "Working on Gambrel", "path": "development", "summary": "Repository layout, conventions and workflow." },
+        { "title": "Application structure", "path": "development", "summary": "Organize server, browser, shared components and build scripts." },
         { "title": "License", "path": "license", "summary": "PolyForm Strict 1.0.0 in plain language." }
       ]
     }

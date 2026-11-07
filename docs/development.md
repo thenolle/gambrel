@@ -1,71 +1,111 @@
-# Working on Gambrel
+# Application structure
 
-How the repository is organized and the conventions it follows.
+A Gambrel application separates build scripts, server entry points, browser entry points and shared components.
 
-## Repository layout
+## Recommended layout
 
 ```text
-gambrel/
-├── packages/
-│   ├── core/         server application
-│   ├── bun/          Bun adapter and static files
-│   ├── view/         JSX runtime and server renderer
-│   ├── reactivity/   signals and effects
-│   ├── router/       matching, resolution, payload
-│   ├── browser/      mount, hydrate, hydrateRoutes
-│   ├── ssr/          document request handler
-│   └── compiler/     discovery, manifests, builds
-│   ├── release-tools/ release tooling
-│   └── components/   shared components
-├── examples/app/     the example application and its integration tests
-├── website/          this documentation site
-├── docs/             the documentation (Markdown)
-└── LICENSE
+my-app/
+├── package.json
+├── tsconfig.json
+├── gambrel.config.ts
+├── scripts/
+│   └── build.ts
+├── public/
+│   └── app.css
+└── src/
+    ├── server.ts
+    ├── client.ts
+    ├── components/
+    ├── data/
+    └── routes/
+        ├── layout.tsx
+        ├── page.tsx
+        └── users/
+            └── [id]/
+                ├── page.tsx
+                └── page.server.ts
 ```
 
-The dependency direction is fixed: lower-level packages never import higher-level ones. See [Architecture](./architecture.md).
+## Server entry
 
-## Commands
+The server entry combines HTTP handlers, static assets and document rendering.
 
-| Command                         | Does                                               |
-| ------------------------------- | -------------------------------------------------- |
-| `bun install`                   | Link the workspace                                 |
-| `bun run typecheck`             | Type-check every package, the example and the site |
-| `bun test`                      | Run every test                                     |
-| `bun run dev`, `build`, `start` | Run the example app                                |
-| `bun run docs`                  | Serve the documentation                            |
+Explicit API routes handle their requests first. The document handler resolves page requests and produces HTML responses.
 
-A change is ready when `typecheck` and `test` both pass.
+Server-only dependencies belong in this graph.
 
-## Conventions
+## Browser entry
 
-- TypeScript with strict settings, including `exactOptionalPropertyTypes` and `noUncheckedIndexedAccess`. Settings are never weakened to make code pass.
-- ESM everywhere, single quotes, no semicolons, small modules with explicit exports.
-- No third-party runtime dependencies.
-- Packages export TypeScript source through `src/index.ts`, and every package is `private`.
-- Fail loudly: invalid input throws an error that names what is wrong. No silent fallbacks.
-- Deterministic output: sorted lists, no timestamps.
-- Test public behavior and integration, not implementation details.
+The browser entry mounts an interface or hydrates server-rendered HTML.
 
-## Add a package
+For routed hydration:
 
-1. Create `packages/<name>` with `package.json` (`private`, `exports` pointing at `./src/index.ts`) and a `tsconfig.json` that extends `../../tsconfig.base.json`.
-2. Add it to the `references` in the root `tsconfig.json`.
-3. Run `bun install`.
-4. Write tests in `test/` and a documentation page.
+```ts
+import { hydrateRoutes } from '@gambrel/browser'
+import { components, routes } from '../.gambrel/manifest.client.ts'
 
-## Add a documentation page
+hydrateRoutes({ routes, components })
+```
 
-1. Write `docs/<name>.md`, starting with one `#` title.
-2. Add it to `docs/nav.json`.
-3. Run `bun test website`.
+The client manifest contains component imports, not loaders or guards.
 
-The tests check that every page in the navigation exists, every Markdown file is listed, and every internal link points at a real page.
+## Shared components
 
-## Commit style
+Components used in pages and layouts must be safe to render on the server and in the browser.
 
-Short, imperative, with a type prefix as used in the history: `feat(router): ...`, `fix(website): ...`, `docs: ...`, `test(example): ...`.
+Use stable initial data. Avoid reading browser globals while building the initial server-rendered tree.
 
-## Contributions
+Perform element-specific browser setup inside a `ref` callback and release resources with ownership cleanup.
 
-The [license](./license.md) does not grant the right to modify or share the code. If you would like to contribute, open an issue first and the maintainer will tell you how to proceed.
+## Route hooks
+
+Place loaders and guards in `page.server.ts` and `layout.server.ts`.
+
+Use type-only imports when a page needs its loader's data type:
+
+```ts
+import type { loader } from './page.server.ts'
+```
+
+That import is erased and does not add the server module to the browser graph.
+
+## Public assets
+
+Serve a dedicated directory containing only public files.
+
+Keep application data, credentials and private configuration outside that directory.
+
+Copy package stylesheets into the public build output through their documented exports instead of exposing an entire package directory.
+
+## Build output
+
+The application build separates server and browser artifacts.
+
+The default structure is:
+
+```text
+dist/
+├── server/
+├── client/
+└── manifest/
+```
+
+See [Build output](./build.md) for the compiler's output conventions.
+
+## Choosing a rendering mode
+
+| Mode               | Use when                                                |
+| ------------------ | ------------------------------------------------------- |
+| SSR with hydration | Initial HTML and browser interaction are both important |
+| CSR                | The interface is mounted and driven by browser code     |
+| Server-only HTML   | Native forms and document navigation are sufficient     |
+
+The examples demonstrate these modes with the same task-board workflow.
+
+## Related
+
+- [Architecture](./architecture.md)
+- [Routing and layouts](./routing.md)
+- [SSR and hydration](./ssr-hydration.md)
+- [Server–client boundary](./server-client-boundary.md)

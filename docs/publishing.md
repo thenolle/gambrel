@@ -1,91 +1,117 @@
-# Publishing to npm
+# Installing packages
 
-The Gambrel packages are published to npm as built JavaScript with type declarations, not as TypeScript source. A small release tool in `tools/release` builds, checks and publishes them.
+Gambrel is distributed as modular ESM packages. Install the packages needed by your application rather than importing server, browser and build tools into one entry point.
 
-## Before the first release
-
-1. An npm account, and the organization `gambrel` (https://www.npmjs.com/org/create) so that you own the `@gambrel` scope.
-2. Be logged in: `npm login`, or an access token in the `NPM_CONFIG_TOKEN` variable or in `~/.npmrc`.
-3. Run `bun run release doctor`. It checks your setup and says what is missing.
-
-> [!NOTE]
-> The packages are licensed under PolyForm Strict 1.0.0 (noncommercial use only, no distribution, no modification). Publishing on npm does not change that, but it means npm users cannot use them commercially. Decide that deliberately.
-
-## Publish from the terminal
+## HTTP applications
 
 ```bash
-bun run release publish
+bun add @gambrel/core @gambrel/bun
 ```
 
-This checks the manifests, runs the type check and the tests, builds every package, verifies the built packages against each other, lists the contents of each tarball, and then asks you to type `yes`. Nothing is published until you do. Useful options:
+Use core for handlers, middleware and responses. Use the Bun adapter to start the server and serve public assets.
 
-| Option         | Meaning                                                                |
-| -------------- | ---------------------------------------------------------------------- |
-| `--yes`        | Publish without the question                                           |
-| `--tag next`   | Publish under a tag other than `latest`                                |
-| `--otp 123456` | A six-digit code from an authenticator app. Not needed with a passkey. |
-| `--skip-tests` | Skip the typecheck and test run                                        |
-| `--client npm` | Publish with npm instead of Bun                                        |
+```ts
+import { serve } from '@gambrel/bun'
+import { createApp, json } from '@gambrel/core'
 
-Versions already on the registry are skipped, so an interrupted release can be resumed by running the command again.
+const app = createApp()
+  .get('/health', () => json({ ok: true }))
 
-To change the version first: `bun run release version 0.2.0`, then commit.
+serve(app, { port: 3000 })
+```
 
-## Publish from GitHub
-
-Add an Actions secret `NPM_TOKEN`, then push a tag that matches the version:
+## JSX and browser interfaces
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+bun add @gambrel/view @gambrel/reactivity @gambrel/browser
 ```
 
-The workflow in `.github/workflows/publish.yml` runs the same steps on a clean machine. You can also run it from the Actions tab; manual runs are dry runs unless you untick the box. Provenance is available for public repositories: set the repository variable `NPM_PROVENANCE` to `true`.
+Configure the JSX runtime:
 
-## What is published
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@gambrel/view"
+  }
+}
+```
 
-Each package is built into `.release/<name>`:
+Use `@gambrel/view` for components and HTML rendering, `@gambrel/reactivity` for state, and `@gambrel/browser` for mounting or hydration.
 
-| File                   | Contents                                                                          |
-| ---------------------- | --------------------------------------------------------------------------------- |
-| `dist/*.js`            | ESM bundles. Imports of other packages stay external.                             |
-| `dist/*.d.ts`          | Type declarations                                                                 |
-| `dist/styles.css`      | The components stylesheet (components only)                                       |
-| `package.json`         | Rewritten for npm: built `exports`, real dependency versions, repository metadata |
-| `README.md`, `LICENSE` | Generated README and the license                                                  |
-
-All packages share one version, and dependencies between them use a caret range of that version.
-
-## Using the published packages
+## Routed server-rendered applications
 
 ```bash
-bun add @gambrel/core @gambrel/bun @gambrel/view @gambrel/router @gambrel/ssr @gambrel/browser @gambrel/compiler
+bun add @gambrel/router @gambrel/ssr @gambrel/compiler
 ```
 
-Gambrel runs on Bun. Configure TSX with `"jsx": "react-jsx"` and `"jsxImportSource": "@gambrel/view"`.
+These packages provide route resolution, document responses and build orchestration. Combine them with the HTTP and view packages.
 
-## Verify packed packages outside the workspace
+Keep compiler imports in build scripts. Keep server adapters and document handlers out of browser entry points.
 
-Before publishing, verify the real package tarballs in a fresh temporary consumer:
+## Components and icons
 
 ```bash
-bun run release build
-bun run release verify
-bun run release:consumer
+bun add @gambrel/components @gambrel/icons
 ```
 
-The consumer command packs every staged package, installs the tarballs outside the repository, checks local JavaScript resolution, runs a strict TypeScript check, exercises SSR and HTTP primitives, and bundles a browser entry.
+Load the stylesheet exported by `@gambrel/components/styles.css` once in your application.
 
-Gambrel dependencies are pinned to the local tarballs, including transitive dependencies. The check does not publish anything or modify npm credentials.
+Use named icon imports for known icons:
 
-TypeScript and Bun type packages are installed using the root project's configured versions. Network access may be needed.
+```tsx
+/** @jsxImportSource @gambrel/view */
+import { Button } from '@gambrel/components'
+import { Plus } from '@gambrel/icons'
 
-Successful temporary consumers are deleted. Use `--keep` to retain one:
-
-```bash
-bun run release:consumer --keep
+export function AddButton() {
+  return (
+    <Button>
+      <Plus size={16} />
+      Add item
+    </Button>
+  )
+}
 ```
 
-Failures preserve the directory and print its location for diagnosis.
+## Package format
 
-This is not a replacement for real-browser verification or a complete consumer application.
+Published packages contain:
+
+- Built ESM JavaScript
+- TypeScript declarations
+- Explicit public exports
+- A package-specific README
+- A license file
+- Stylesheets where the package provides them
+
+Do not depend on unpublished source paths such as `@gambrel/components/src/...`. Import from the documented package entry points.
+
+## Version selection
+
+Use a consistent Gambrel release across packages in the same application.
+
+For reproducible installations, commit your lockfile and use the package manager's frozen-lockfile mode in deployment automation.
+
+## Runtime boundaries
+
+| Import                                                    | Where it belongs                   |
+| --------------------------------------------------------- | ---------------------------------- |
+| `@gambrel/core`, `@gambrel/bun`, `@gambrel/ssr`           | Server application                 |
+| `@gambrel/compiler`                                       | Build scripts                      |
+| `@gambrel/browser`                                        | Browser entry                      |
+| `@gambrel/view`, `@gambrel/router`, `@gambrel/reactivity` | Appropriate shared or runtime code |
+| `@gambrel/components`, `@gambrel/icons`                   | Components                         |
+
+A package's availability does not mean every export should run in every environment.
+
+## License
+
+Read the [license](./license.md) before adoption, modification, redistribution or application deployment.
+
+## Related
+
+- [Getting started](./getting-started.md)
+- [Server–client boundary](./server-client-boundary.md)
+- [Configuration](./configuration.md)
+- [Components](./components.md)
