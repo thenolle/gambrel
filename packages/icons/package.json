@@ -1,6 +1,6 @@
 {
   "name": "@gambrel/icons",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "A hand-drawn SVG icon library for Gambrel: one tree-shakable component per icon, generated from plain SVG files.",
   "license": "PolyForm-Strict-1.0.0",

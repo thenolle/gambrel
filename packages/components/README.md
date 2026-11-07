@@ -75,6 +75,14 @@ Interactive components support their documented controlled and uncontrolled prop
 
 Native dialog behavior requires browser support for `showModal()`.
 
+## Content and feedback
+
+CopyButton, CodeBlock, CharacterCount, Meter, StatusBadge, Timeline,
+Disclosure and VisuallyHidden provide copy actions, escaped code presentation,
+measurements and semantic content patterns.
+
+[Content component guide](https://thenolle.github.io/gambrel/#/component-content)
+
 ## Styling
 
 Colors use CSS custom properties such as `--primary`, `--background`, `--border`, and `--ring`. Dark mode uses `.dark` or `[data-theme="dark"]`.

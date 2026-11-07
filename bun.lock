@@ -46,7 +46,7 @@
     },
     "packages/browser": {
       "name": "@gambrel/browser",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/reactivity": "workspace:*",
         "@gambrel/router": "workspace:*",
@@ -58,21 +58,21 @@
     },
     "packages/bun": {
       "name": "@gambrel/bun",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/core": "workspace:*",
       },
     },
     "packages/compiler": {
       "name": "@gambrel/compiler",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/router": "workspace:*",
       },
     },
     "packages/components": {
       "name": "@gambrel/components",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/icons": "workspace:*",
         "@gambrel/reactivity": "workspace:*",
@@ -85,29 +85,29 @@
     },
     "packages/core": {
       "name": "@gambrel/core",
-      "version": "0.2.2",
+      "version": "0.2.3",
     },
     "packages/icons": {
       "name": "@gambrel/icons",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/view": "workspace:*",
       },
     },
     "packages/reactivity": {
       "name": "@gambrel/reactivity",
-      "version": "0.2.2",
+      "version": "0.2.3",
     },
     "packages/router": {
       "name": "@gambrel/router",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/view": "workspace:*",
       },
     },
     "packages/ssr": {
       "name": "@gambrel/ssr",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@gambrel/router": "workspace:*",
         "@gambrel/view": "workspace:*",
@@ -115,7 +115,7 @@
     },
     "packages/view": {
       "name": "@gambrel/view",
-      "version": "0.2.2",
+      "version": "0.2.3",
     },
     "tools/release": {
       "name": "@gambrel/release-tools",

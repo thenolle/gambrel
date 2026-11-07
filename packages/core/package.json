@@ -1,6 +1,6 @@
 {
   "name": "@gambrel/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "PolyForm-Strict-1.0.0",
   "description": "Server app, context, response normalization",
   "private": true,

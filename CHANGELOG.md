@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.3
+
+### Added
+
+- 32 SVG icons covering accessibility, productivity, navigation, science,
+  connectivity and application status.
+- CopyButton and CodeBlock for copy actions and escaped code presentation.
+- CharacterCount and native Meter.
+- StatusBadge and Timeline.
+- Native Disclosure and VisuallyHidden.
+- Public content-component documentation and interaction/hydration tests.
+
 ## 0.2.2
 
 ### Documentation

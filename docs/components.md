@@ -249,6 +249,11 @@ Tooltip timers are canceled when disposed. A focused descendant receives the too
 
 Hover and keyboard focus are tracked separately, so leaving with the pointer does not hide a tooltip while its control remains focused.
 
+## Content and feedback
+
+See [Content and feedback](./component-content.md) for CopyButton, CodeBlock,
+CharacterCount, Meter, StatusBadge, Timeline, Disclosure and VisuallyHidden.
+
 ### Verification boundary
 
 Automated tests use happy-dom for lifecycle, state and focus assertions. Native focus trapping, backdrop behavior and browser top-layer rendering still require real-browser verification.

@@ -111,6 +111,14 @@ bun run --filter @gambrel/icons preview
 
 Automated validation checks structure, generated exports and rendering. Review the preview visually before releasing changed drawings.
 
+## Additional interface icons
+
+The collection includes Accessibility, AlarmClock, Anchor, Award, Briefcase,
+CalendarCheck, CalendarDays, CloudDownload, CloudUpload, Compass, FileLock,
+Fingerprint, Gauge, GraduationCap, Network, ScanLine and Workflow.
+
+Use the icon catalog to search all available names and inspect their drawings.
+
 ### See what you drew
 
 ```bash
