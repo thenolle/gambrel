@@ -1,19 +1,11 @@
 /** @jsxImportSource @gambrel/view */
 import { onCleanup, signal } from '@gambrel/reactivity'
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Badge,
-  Button,
-  EmptyState,
-  Field,
-  Input
-} from '@gambrel/components'
+import { Alert, AlertDescription, AlertTitle, Badge, Button, EmptyState, Field, Input } from '@gambrel/components'
 import { Gambrel } from '@gambrel/icons'
 import type { LayoutProps, PageProps, RouteParams } from '@gambrel/router'
 import type { Child } from '@gambrel/view'
 import { parseBoard, type Mode, type Task } from './model.ts'
+import { snapshotForm } from './form-submission.ts'
 
 export type TaskPageData = {
   tasks: Task[]
@@ -94,16 +86,19 @@ export function Board(props: {
         const submit = async (event: Event): Promise<void> => {
           const target = event.target as HTMLFormElement | null
           if (target === null || target.tagName !== 'FORM') return
+
           event.preventDefault()
           if (pending() || loading()) return
 
-          pending.set(true)
-          error.set('')
-
           try {
-            const next = await request(target.action, {
+            const submission = snapshotForm(target)
+
+            pending.set(true)
+            error.set('')
+
+            const next = await request(submission.action, {
               method: 'POST',
-              body: new FormData(target)
+              body: submission.body
             })
 
             if (!disposed) {

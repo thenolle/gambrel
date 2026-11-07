@@ -16,6 +16,9 @@
     "@gambrel/ssr": "workspace:*",
     "@gambrel/view": "workspace:*"
   },
+  "devDependencies": {
+    "happy-dom": "^21.0.4"
+  },
   "scripts": {
     "build": "bun scripts/build.ts",
     "ssr": "bun run build && bun dist/server.js ssr",

@@ -26,6 +26,24 @@
         "happy-dom": "latest",
       },
     },
+    "examples/modes": {
+      "name": "@gambrel/example-modes",
+      "version": "0.1.0",
+      "dependencies": {
+        "@gambrel/browser": "workspace:*",
+        "@gambrel/bun": "workspace:*",
+        "@gambrel/components": "workspace:*",
+        "@gambrel/core": "workspace:*",
+        "@gambrel/icons": "workspace:*",
+        "@gambrel/reactivity": "workspace:*",
+        "@gambrel/router": "workspace:*",
+        "@gambrel/ssr": "workspace:*",
+        "@gambrel/view": "workspace:*",
+      },
+      "devDependencies": {
+        "happy-dom": "^21.0.4",
+      },
+    },
     "packages/browser": {
       "name": "@gambrel/browser",
       "version": "0.2.0",
@@ -124,6 +142,8 @@
     "@gambrel/core": ["@gambrel/core@workspace:packages/core"],
 
     "@gambrel/example-app": ["@gambrel/example-app@workspace:examples/app"],
+
+    "@gambrel/example-modes": ["@gambrel/example-modes@workspace:examples/modes"],
 
     "@gambrel/icons": ["@gambrel/icons@workspace:packages/icons"],
 
