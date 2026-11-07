@@ -185,6 +185,10 @@ import { Button, toast, Toaster } from '@gambrel/components'
 
 `paginationRange(page, pageCount, siblings)` returns the numbers and `'ellipsis'` markers if you want to build your own.
 
+## Application UI
+
+See [Application UI](./component-application.md) for Command, Combobox, navigation and sidebar primitives, Toolbar, EmptyState, StatCard, DescriptionList, Stepper and DataTable.
+
 ## Add a component
 
 1. Create `src/components/<name>.tsx`. For a simple wrapper, one line is enough:

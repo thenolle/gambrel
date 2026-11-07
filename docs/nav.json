@@ -37,7 +37,8 @@
       "pages": [
         { "title": "@gambrel/icons", "path": "icons", "summary": "A hand-drawn icon library, generated from SVG files." },
         { "title": "@gambrel/components", "path": "components", "summary": "shadcn-style UI components with plain CSS." },
-        { "title": "Form components", "path": "component-forms", "summary": "Linked fields, enhanced native inputs and toggle groups." }
+        { "title": "Form components", "path": "component-forms", "summary": "Linked fields, enhanced native inputs and toggle groups." },
+        { "title": "Application UI", "path": "component-application", "summary": "Commands, searchable selection, navigation, tables and application states." }
       ]
     },
     {
