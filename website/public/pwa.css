@@ -1,0 +1,139 @@
+.docs-install {
+  flex: none;
+}
+
+.docs-app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  color: hsl(var(--muted-foreground));
+  font-size: .75rem;
+}
+
+.docs-text-button {
+  padding: .25rem 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.docs-text-button:hover {
+  color: hsl(var(--foreground));
+}
+
+.docs-text-button:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 4px;
+}
+
+.docs-connection {
+  margin-right: auto;
+}
+
+.docs-update {
+  position: fixed;
+  z-index: 80;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: .75rem 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  box-shadow: 0 4px 18px rgb(0 0 0 / .12);
+  font-size: .8125rem;
+}
+
+.docs-update-feedback:empty {
+  display: none;
+}
+
+.docs-install-help {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+}
+
+.docs-help-content {
+  padding: 1.5rem;
+}
+
+.docs-help-content h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.25rem;
+  letter-spacing: -.02em;
+}
+
+.docs-help-content p,
+.docs-help-content dd {
+  line-height: 1.6;
+  font-size: .875rem;
+}
+
+.docs-help-content dl {
+  margin: 1.25rem 0;
+}
+
+.docs-help-content dt {
+  margin-top: .875rem;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.docs-help-content dd {
+  margin: .25rem 0 0;
+  color: hsl(var(--muted-foreground));
+}
+
+.docs-help-note {
+  color: hsl(var(--muted-foreground));
+}
+
+@media (max-width: 560px) {
+  .docs-install {
+    padding-inline: .5rem;
+    min-width: 0;
+  }
+
+  .docs-update > span:first-child {
+    flex-basis: 100%;
+  }
+
+  .docs-update .btn {
+    min-height: 2.75rem;
+  }
+}
+
+@media (display-mode: standalone) {
+  .docs-install {
+    display: none;
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media print {
+  .docs-app-footer,
+  .docs-update,
+  .docs-install,
+  .docs-install-help {
+    display: none !important;
+  }
+}

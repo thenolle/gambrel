@@ -116,6 +116,46 @@ export class Raster {
     }
   }
 
+  /**
+   * Fills closed polygon contours using even-odd coverage.
+   * Four vertical samples plus exact horizontal overlap provide antialiased edges.
+   */
+  fillContours(contours: readonly (readonly (readonly [number, number])[])[], color: Color): void {
+    const points = contours.flat()
+    if (points.length === 0) return
+    const firstY = Math.max(0, Math.floor(Math.min(...points.map((point) => point[1]))))
+    const lastY = Math.min(this.height - 1, Math.ceil(Math.max(...points.map((point) => point[1]))))
+    const samples = 4
+    for (let y = firstY; y <= lastY; y += 1) {
+      const coverage = new Float32Array(this.width)
+      for (let sample = 0; sample < samples; sample += 1) {
+        const scanY = y + (sample + .5) / samples
+        const intersections: number[] = []
+        for (const contour of contours) {
+          for (let index = 0; index < contour.length; index += 1) {
+            const a = contour[index]
+            const b = contour[(index + 1) % contour.length]
+            if (a === undefined || b === undefined) continue
+            if ((a[1] <= scanY && b[1] > scanY) || (b[1] <= scanY && a[1] > scanY)) intersections.push(a[0] + (scanY - a[1]) * (b[0] - a[0]) / (b[1] - a[1]))
+          }
+        }
+        intersections.sort((a, b) => a - b)
+        for (let index = 0; index + 1 < intersections.length; index += 2) {
+          const left = intersections[index]
+          const right = intersections[index + 1]
+          if (left === undefined || right === undefined) continue
+          const from = Math.max(0, Math.floor(left))
+          const to = Math.min(this.width - 1, Math.floor(right))
+          for (let x = from; x <= to; x += 1) {
+            const overlap = Math.max(0, Math.min(x + 1, right) - Math.max(x, left))
+            coverage[x] = (coverage[x] ?? 0) + overlap / samples
+          }
+        }
+      }
+      for (let x = 0; x < this.width; x += 1) this.blend(x, y, color, Math.min(1, coverage[x] ?? 0))
+    }
+  }
+
   png(): Buffer {
     const stride = this.width * 3
     const scanlines = Buffer.alloc((stride + 1) * this.height)

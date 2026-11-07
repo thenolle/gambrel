@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { appIcon } from './social-image.ts'
 
@@ -15,70 +15,65 @@ async function filesUnder(directory: string, root = directory): Promise<string[]
 
 export async function buildPwa(dist: string): Promise<void> {
   await mkdir(join(dist, 'app-icons'), { recursive: true })
-  for (const size of [192, 512]) await writeFile(join(dist, 'app-icons', `icon-${size}.png`), await appIcon(size))
+  for (const size of [192, 512]) await writeFile(join(dist, 'app-icons', `icon-${size}.png`), appIcon(size))
+  const icons = [192, 512].map((size) => ({ src: `app-icons/icon-${size}.png`, sizes: `${size}x${size}`, type: 'image/png', purpose: 'any maskable' }))
   await writeFile(join(dist, 'manifest.webmanifest'), JSON.stringify({
     id: './',
-    name: 'Gambrel Documentation',
+    name: 'Gambrel',
     short_name: 'Gambrel',
-    description: 'Gambrel guides, API references, components and SVG icons.',
+    description: 'Documentation, component references and icons.',
     lang: 'en',
     start_url: './',
     scope: './',
     display: 'standalone',
-    background_color: '#09090e',
-    theme_color: '#18181b',
-    prefer_related_applications: false,
-    icons: [
-      {
-        src: 'app-icons/icon-192.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any maskable'
-      },
-      {
-        src: 'app-icons/icon-512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any maskable'
-      }
+    background_color: '#f9f9f7',
+    theme_color: '#18181f',
+    categories: ['education', 'developer tools'],
+    icons,
+    shortcuts: [
+      { name: 'Getting started', url: './getting-started/' },
+      { name: 'Icon catalog', url: './icons.html' }
     ]
   }, null, 2) + '\n', 'utf8')
   await writeFile(join(dist, 'offline.html'), `<!doctype html>
 <html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,follow"><title>Offline · Gambrel</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Offline · Gambrel</title>
 <style>
-body{font:16px/1.6 system-ui,sans-serif;max-width:36rem;padding:3rem 1rem;margin:auto;
-background:#18181b;color:#fafafa}a{color:#c4b5fd}
+body{font:16px/1.6 system-ui,sans-serif;max-width:34rem;padding:4rem 1.5rem;margin:auto;
+background:#f9f9f7;color:#202124}a{color:inherit}
 </style></head><body>
-<h1>This page is unavailable offline</h1>
-<p>The installed documentation includes cached guides and the icon catalog.
-This address is not part of that saved build.</p>
-<p><a href="./">Open saved documentation</a></p>
+<h1>This page isn't saved</h1>
+<p>Your saved documentation is still available. Reconnect to open this address.</p>
+<a href="./">Open documentation</a>
 </body></html>`, 'utf8')
   const paths = await filesUnder(dist)
   for (const path of paths.filter((file) => file.endsWith('.html'))) {
     const file = join(dist, path)
-    const html = await readFile(file, 'utf8')
+    let html = await readFile(file, 'utf8')
     const depth = path.split('/').length - 1
-    const base = /<base\b/i.test(html) ? '' : `<base href="${depth === 0 ? './' : '../'.repeat(depth)}">`
-    const head = [
-      base,
+    if (!/<base\b/i.test(html)) html = html.replace('<head>', `<head><base href="${depth === 0 ? './' : '../'.repeat(depth)}">`)
+    const tags = [
       '<link rel="manifest" href="manifest.webmanifest">',
       '<link rel="apple-touch-icon" href="app-icons/icon-192.png">',
-      '<meta name="apple-mobile-web-app-capable" content="yes">',
+      '<link rel="stylesheet" href="pwa.css">',
       '<meta name="apple-mobile-web-app-title" content="Gambrel">'
     ].join('\n')
-    await writeFile(file, html.replace('</head>', `${head}\n</head>`).replace('</body>', '<script type="module" src="pwa-client.js"></script>\n</body>'), 'utf8')
+    html = html.replace('</head>', `${tags}\n</head>`).replace('</body>', '<script type="module" src="pwa-client.js"></script>\n</body>')
+    await writeFile(file, html, 'utf8')
   }
+  await mkdir(join(dist, 'licenses'), { recursive: true })
+  await cp(join(import.meta.dir, '..', 'assets', 'fonts', 'OFL.txt'), join(dist, 'licenses', 'atkinson-hyperlegible.txt'))
   const allFiles = await filesUnder(dist)
   const precache = allFiles.filter((file) => !file.startsWith('social/') && !file.endsWith('.map') && !['sw.js', '.nojekyll', 'robots.txt', 'sitemap.xml'].includes(file))
-  const digest = createHash('sha256')
+  const hash = createHash('sha256')
   for (const file of precache) {
-    digest.update(file)
-    digest.update(await readFile(join(dist, file)))
+    hash.update(file)
+    hash.update(await readFile(join(dist, file)))
   }
-  const version = digest.digest('hex').slice(0, 20)
+  const version = hash.digest('hex').slice(0, 20)
   const worker = `
 const VERSION = ${JSON.stringify(version)}
 const FILES = ${JSON.stringify(precache)}
@@ -111,6 +106,7 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   const request = event.request
   const url = new URL(request.url)
+
   if (request.method !== 'GET' || url.origin !== ROOT.origin ||
       !url.pathname.startsWith(ROOT.pathname)) return
 
